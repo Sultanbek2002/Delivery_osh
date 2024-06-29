@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/routes/app_routes.dart';
@@ -8,9 +11,7 @@ import '../../../core/utils/validators.dart';
 import 'login_button.dart';
 
 class LoginPageForm extends StatefulWidget {
-  const LoginPageForm({
-    Key? key,
-  }) : super(key: key);
+  const LoginPageForm({Key? key}) : super(key: key);
 
   @override
   State<LoginPageForm> createState() => _LoginPageFormState();
@@ -18,17 +19,78 @@ class LoginPageForm extends StatefulWidget {
 
 class _LoginPageFormState extends State<LoginPageForm> {
   final _key = GlobalKey<FormState>();
-
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool isPasswordShown = false;
+
   onPassShowClicked() {
-    isPasswordShown = !isPasswordShown;
-    setState(() {});
+    setState(() {
+      isPasswordShown = !isPasswordShown;
+    });
   }
 
-  onLogin() {
+  Future<void> onLogin() async {
     final bool isFormOkay = _key.currentState?.validate() ?? false;
     if (isFormOkay) {
-      Navigator.pushNamed(context, AppRoutes.entryPoint);
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+
+      // Log email and password
+      print('Email: $email, Password: $password');
+
+      try {
+        final response = await login(email, password);
+
+        // Log response
+        print('Response: $response');
+
+        if (response['Success']) {
+          final accessToken = response['Data']['AccessToken'];
+          // Сохраняем токен в SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('accessToken', accessToken);
+
+          // Выводим токен на консоль
+          print('Access Token: $accessToken');
+          Navigator.pushNamed(context, AppRoutes.entryPoint);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Login failed: ${response['Error']}')),
+          );
+        }
+      } catch (e) {
+        // Log exception
+        print('Exception during login: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: $e')),
+        );
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final url = 'https://www.quickpickdeal.com/api/auth/login';
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'email': email,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Failed to login, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Log HTTP error
+      print('HTTP request error: $e');
+      throw Exception('Failed to login, HTTP error: $e');
     }
   }
 
@@ -45,12 +107,13 @@ class _LoginPageFormState extends State<LoginPageForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Phone Field
-              const Text("Номер телефона"),
+              // Email Field
+              const Text("Email"),
               const SizedBox(height: 8),
               TextFormField(
-                keyboardType: TextInputType.number,
-                validator: Validators.requiredWithFieldName('Phone'),
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                validator: Validators.requiredWithFieldName('Email'),
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: AppDefaults.padding),
@@ -59,6 +122,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
               const Text("Пароль"),
               const SizedBox(height: 8),
               TextFormField(
+                controller: _passwordController,
                 validator: Validators.password,
                 onFieldSubmitted: (v) => onLogin(),
                 textInputAction: TextInputAction.done,
