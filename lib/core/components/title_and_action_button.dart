@@ -37,7 +37,7 @@ class TitleAndActionButton extends StatelessWidget {
           ),
           TextButton(
             onPressed: onTap,
-            child: Text(actionLabel ?? 'View All'),
+            child: Text(actionLabel ?? 'Все '),
           ),
         ],
       ),

@@ -4,18 +4,32 @@ import '../../core/components/app_back_button.dart';
 import '../../core/components/buy_now_row_button.dart';
 import '../../core/components/price_and_quantity.dart';
 import '../../core/components/product_images_slider.dart';
-import '../../core/components/review_row_button.dart';
 import '../../core/constants/app_defaults.dart';
+import '../../core/models/product_model.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   const ProductDetailsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final ProductModel? product = ModalRoute.of(context)!.settings.arguments as ProductModel?;
+    print("dfdn ${product} ");
+    if (product == null) {
+      return Scaffold(
+        appBar: AppBar(
+          leading: const BackButton(),
+          title: const Text('Product Details'),
+        ),
+        body: const Center(
+          child: Text('Invalid product details.'),
+        ),
+      );
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        leading: const AppBackButton(),
+        leading: const BackButton(),
         title: const Text('Product Details'),
       ),
       bottomNavigationBar: SafeArea(
@@ -30,11 +44,11 @@ class ProductDetailsPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const ProductImagesSlider(
+            ProductImagesSlider(
               images: [
-                'https://i.imgur.com/3o6ons9.png',
-                'https://i.imgur.com/3o6ons9.png',
-                'https://i.imgur.com/3o6ons9.png',
+                product.image,
+                product.image,
+                product.image,
               ],
             ),
             SizedBox(
@@ -45,23 +59,23 @@ class ProductDetailsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Cauliflower Bangladeshi',
+                      product.title,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                     ),
                     const SizedBox(height: 8),
-                    const Text('Weight: 5Kg'),
+                    Text('Category: ${product.category}'),
                   ],
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppDefaults.padding),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
               child: PriceAndQuantityRow(
-                currentPrice: 20,
-                orginalPrice: 30,
-                quantity: 2,
+                currentPrice: product.price,
+                orginalPrice: product.price, // Assuming no original price in model
+                quantity: 1, // Default quantity
               ),
             ),
             const SizedBox(height: 8),
@@ -80,24 +94,9 @@ class ProductDetailsPage extends StatelessWidget {
                         ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Duis aute veniam veniam qui aliquip irure duis sint magna occaecat dolore nisi culpa do. Est nisi incididunt aliquip  commodo aliqua tempor.',
+                  Text(
+                    product.description,
                   ),
-                ],
-              ),
-            ),
-
-            /// Review Row
-            const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppDefaults.padding,
-                // vertical: AppDefaults.padding,
-              ),
-              child: Column(
-                children: [
-                  Divider(thickness: 0.1),
-                  ReviewRowButton(totalStars: 5),
-                  Divider(thickness: 0.1),
                 ],
               ),
             ),
