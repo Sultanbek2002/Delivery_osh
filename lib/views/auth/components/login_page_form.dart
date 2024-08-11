@@ -9,6 +9,7 @@ import '../../../core/routes/app_routes.dart';
 import '../../../core/themes/app_themes.dart';
 import '../../../core/utils/validators.dart';
 import 'login_button.dart';
+import '../../api_routes/apis.dart';
 
 class LoginPageForm extends StatefulWidget {
   const LoginPageForm({Key? key}) : super(key: key);
@@ -44,12 +45,14 @@ class _LoginPageFormState extends State<LoginPageForm> {
         // Log response
         print('Response: $response');
 
-        if (response['Success']) {
-          final accessToken = response['Data']['AccessToken'];
-          // Сохраняем токен в SharedPreferences
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('accessToken', accessToken);
+        if (response.containsKey('access_token')) {
+          final accessToken = response["access_token"];
+         
 
+          // Сохраняем токен и тип токена в SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('auth_token', accessToken);
+        
           // Выводим токен на консоль
           print('Access Token: $accessToken');
           Navigator.pushNamed(context, AppRoutes.entryPoint);
@@ -69,7 +72,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final url = 'https://www.quickpickdeal.com/api/auth/login';
+    final url = '${ApiConsts.urlbase}/api/login';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -128,14 +131,11 @@ class _LoginPageFormState extends State<LoginPageForm> {
                 textInputAction: TextInputAction.done,
                 obscureText: !isPasswordShown,
                 decoration: InputDecoration(
-                  suffixIcon: Material(
-                    color: Colors.transparent,
-                    child: IconButton(
-                      onPressed: onPassShowClicked,
-                      icon: SvgPicture.asset(
-                        AppIcons.eye,
-                        width: 24,
-                      ),
+                  suffixIcon: IconButton(
+                    onPressed: onPassShowClicked,
+                    icon: Icon(
+                      isPasswordShown ? Icons.visibility : Icons.visibility_off,
+                      size: 24,
                     ),
                   ),
                 ),

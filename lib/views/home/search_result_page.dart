@@ -44,22 +44,22 @@ class SearchResultPage extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.only(top: AppDefaults.padding),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                childAspectRatio: 0.85,
-              ),
-              itemCount: 16,
-              itemBuilder: (context, index) {
-                return ProductTileSquare(
-                  data: Dummy.products.first,
-                );
-              },
-            ),
-          ),
+          // Expanded(
+          //   child: GridView.builder(
+          //     padding: const EdgeInsets.only(top: AppDefaults.padding),
+          //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          //       crossAxisCount: 2,
+          //       mainAxisSpacing: 16,
+          //       childAspectRatio: 0.85,
+          //     ),
+          //     itemCount: 16,
+          //     itemBuilder: (context, index) {
+          //       return ProductTileSquare(
+          //         data: Dummy.products.first,
+          //       );
+          //     },
+          //   ),
+          // ),
         ],
       ),
     );

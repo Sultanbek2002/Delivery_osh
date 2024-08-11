@@ -13,7 +13,7 @@ class ContactUsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: const AppBackButton(),
-        title: const Text('Contact Us'),
+        title: const Text('Связь с разработчиками'),
       ),
       backgroundColor: AppColors.cardColor,
       body: Container(
@@ -32,7 +32,7 @@ class ContactUsPage extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Contact Us',
+                'Связь с разработчиками',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -51,14 +51,14 @@ class ContactUsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '+8801710000000',
+                      '+996700276475',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: Colors.black,
                           ),
                     ),
                     const SizedBox(height: AppDefaults.padding / 2),
                     Text(
-                      '+8801710000000',
+                      '+996703421521',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: Colors.black,
                           ),
@@ -73,8 +73,8 @@ class ContactUsPage extends StatelessWidget {
                 SvgPicture.asset(AppIcons.contactEmail),
                 const SizedBox(width: AppDefaults.padding),
                 Text(
-                  'jonarban45@gmail.com',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  'sulanbekabdykadyrov69@gmail.com',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.black,
                       ),
                 ),
@@ -87,7 +87,7 @@ class ContactUsPage extends StatelessWidget {
                 SvgPicture.asset(AppIcons.contactMap),
                 const SizedBox(width: AppDefaults.padding),
                 Text(
-                  '26/C Mohammadpur\nDhaka, Bangladesh',
+                  'Араванский\nОш, Кыргызстан',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Colors.black,
                       ),
@@ -95,16 +95,7 @@ class ContactUsPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppDefaults.padding),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: const AspectRatio(
-                aspectRatio: 3 / 2,
-                child: NetworkImageWithLoader(
-                  'https://i.imgur.com/nys3Bxw.png',
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
+            
           ],
         ),
       ),

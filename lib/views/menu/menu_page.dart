@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../api_routes/apis.dart';
 import '../../core/constants/constants.dart';
 import '../../core/routes/app_routes.dart';
 import 'components/category_tile.dart';
@@ -14,117 +17,109 @@ class MenuPage extends StatelessWidget {
         children: [
           const SizedBox(height: 32),
           Text(
-            'Choose a category',
+            'Выберите категорию',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
           ),
           const SizedBox(height: 16),
-          const CateogoriesGrid()
+          const CategoriesGrid()
         ],
       ),
     );
   }
 }
 
-class CateogoriesGrid extends StatelessWidget {
-  const CateogoriesGrid({
+class CategoriesGrid extends StatefulWidget {
+  const CategoriesGrid({
     Key? key,
   }) : super(key: key);
 
   @override
+  _CategoriesGridState createState() => _CategoriesGridState();
+}
+
+class _CategoriesGridState extends State<CategoriesGrid> {
+  List<dynamic> categories = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCategories();
+  }
+
+  Future<void> fetchCategories() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? accessToken = prefs.getString('auth_token');
+
+    if (accessToken == null) {
+      // Handle the case where the token is missing
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: Missing access token')),
+      );
+      return;
+    }
+
+    final url = '${ApiConsts.urlbase}/api/all-CategoryProduct';
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        // Print the entire response data
+        print('Response data: $data');
+
+        // Iterate over each category and print it
+        setState(() {
+          categories = data['categories'];
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (e) {
+      // Log the error
+      print('HTTP request error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load categories: $e')),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     return Expanded(
-      child: GridView.count(
-        crossAxisCount: 3,
-        children: [
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/tGChxbZ.png',
-            label: 'Vegetables',
-            backgroundColor: AppColors.primary,
+      child: GridView.builder(
+        itemCount: categories.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+        ),
+        itemBuilder: (context, index) {
+          final category = categories[index];
+          return CategoryTile(
+            imageLink: '${ApiConsts.urlbase}/images/${category['image']}', // Update with your server URL
+            label: category['ru_name'], // Use 'ru_name' or 'name' based on your preference
             onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
+               Navigator.pushNamed(
+              context,
+              AppRoutes.categoryDetails,
+              arguments: category['id'], // Передача ID категории
+            );
             },
-          ),
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/yOFxoIP.png',
-            label: 'Meat And Fish',
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
-            },
-          ),
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/GPsRaFC.png',
-            label: 'Medicine',
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
-            },
-          ),
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/mGRqfnc.png',
-            label: 'Baby Care',
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
-            },
-          ),
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/fwyz4oC.png',
-            label: 'Office Supplies',
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
-            },
-          ),
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/DNr8a6R.png',
-            label: 'Beauty',
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
-            },
-          ),
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/O2ZX5nR.png',
-            label: 'Gym Equipment',
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
-            },
-          ),
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/wJBopjL.png',
-            label: 'Gardening Tools',
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
-            },
-          ),
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/P4yJA9t.png',
-            label: 'Pet Care',
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
-            },
-          ),
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/sxGf76e.png',
-            label: 'Eye Wears',
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
-            },
-          ),
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/BPvKeXl.png',
-            label: 'Pack',
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
-            },
-          ),
-          CategoryTile(
-            imageLink: 'https://i.imgur.com/m65fusg.png',
-            label: 'Others',
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.categoryDetails);
-            },
-          ),
-        ],
+          );
+        },
       ),
     );
   }

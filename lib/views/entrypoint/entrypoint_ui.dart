@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grocery/core/constants/app_icons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_defaults.dart';
@@ -38,7 +39,29 @@ class _EntryPointUIState extends State<EntryPointUI> {
     const SavePage(isHomePage: false),
     const ProfilePage(),
   ];
-
+  // Future<void> _clearStorage() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.clear();
+  // }
+  //  @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: const Text('Clear Storage'),
+  //     ),
+  //     body: Center(
+  //       child: ElevatedButton(
+  //         onPressed: () async {
+  //           await _clearStorage();
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             const SnackBar(content: Text('Local storage cleared')),
+  //           );
+  //         },
+  //         child: const Text('Clear Local Storage'),
+  //       ),
+  //     ),
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

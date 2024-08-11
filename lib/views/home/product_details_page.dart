@@ -1,24 +1,95 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/components/app_back_button.dart';
 import '../../core/components/buy_now_row_button.dart';
-import '../../core/components/price_and_quantity.dart';
 import '../../core/components/product_images_slider.dart';
 import '../../core/constants/app_defaults.dart';
-import '../../core/models/product_model.dart';
 
-class ProductDetailsPage extends StatelessWidget {
-  const ProductDetailsPage({Key? key}) : super(key: key);
+class ProductDetailsPage extends StatefulWidget {
+  final Map<String, dynamic> product;
+
+  const ProductDetailsPage({Key? key, required this.product}) : super(key: key);
+
+  @override
+  _ProductDetailsPageState createState() => _ProductDetailsPageState();
+}
+
+class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  bool isFavorite = false;
+  bool isInCart = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFavorite();
+    _checkIfInCart();
+  }
+
+  Future<void> _checkIfFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    final favorites = prefs.getStringList('favorites');
+    if (favorites != null) {
+      setState(() {
+        isFavorite = favorites.contains(widget.product['id'].toString());
+      });
+    } else {
+      await prefs.setStringList('favorites', []);
+    }
+  }
+
+  Future<void> _checkIfInCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cart = prefs.getStringList('cart');
+    if (cart != null) {
+      setState(() {
+        isInCart = cart.contains(widget.product['id'].toString());
+      });
+    } else {
+      await prefs.setStringList('cart', []);
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+    final favorites = prefs.getStringList('favorites') ?? [];
+
+    if (isFavorite) {
+      favorites.remove(widget.product['id'].toString());
+    } else {
+      favorites.add(widget.product['id'].toString());
+    }
+
+    await prefs.setStringList('favorites', favorites);
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+  }
+
+  Future<void> _addToCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cart = prefs.getStringList('cart') ?? [];
+
+    if (isInCart) {
+      cart.remove(widget.product['id'].toString());
+    } else {
+      cart.add(widget.product['id'].toString());
+    }
+
+    await prefs.setStringList('cart', cart);
+    setState(() {
+      isInCart = !isInCart;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final ProductModel? product = ModalRoute.of(context)!.settings.arguments as ProductModel?;
-    print("dfdn ${product} ");
-    if (product == null) {
+    final product = widget.product;
+
+    if (product.isEmpty) {
       return Scaffold(
         appBar: AppBar(
           leading: const BackButton(),
-          title: const Text('Product Details'),
+          title: const Text('Все о продукте'),
         ),
         body: const Center(
           child: Text('Invalid product details.'),
@@ -26,18 +97,21 @@ class ProductDetailsPage extends StatelessWidget {
       );
     }
 
+    final double price = double.tryParse(product['price']) ?? 0.0;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: const BackButton(),
-        title: const Text('Product Details'),
+        title: const Text('Продукт'),
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
           child: BuyNowRow(
             onBuyButtonTap: () {},
-            onCartButtonTap: () {},
+            onCartButtonTap: _addToCart,
+            isInCart: isInCart,
           ),
         ),
       ),
@@ -46,56 +120,55 @@ class ProductDetailsPage extends StatelessWidget {
           children: [
             ProductImagesSlider(
               images: [
-                product.image,
-                product.image,
-                product.image,
+                'https://dostavka.arendabook.com/images/${product['image']}',
+                'https://dostavka.arendabook.com/images/${product['image_2']}',
+                'https://dostavka.arendabook.com/images/${product['image_3']}',
+                'https://dostavka.arendabook.com/images/${product['image_4']}',
               ],
             ),
-            SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.all(AppDefaults.padding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product.title,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text('Category: ${product.category}'),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
-              child: PriceAndQuantityRow(
-                currentPrice: product.price,
-                orginalPrice: product.price, // Assuming no original price in model
-                quantity: 1, // Default quantity
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            /// Product Details
             Padding(
               padding: const EdgeInsets.all(AppDefaults.padding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        product['name'],
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                        textAlign: TextAlign.center,
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.red : Colors.grey,
+                        ),
+                        onPressed: _toggleFavorite,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
                   Text(
-                    'Product Details',
+                    '${price} сом',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Описание: ',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
+                    textAlign: TextAlign.left,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    product.description,
+                    product['description'],
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),

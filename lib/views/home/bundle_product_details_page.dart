@@ -54,10 +54,10 @@ class BundleProductDetailsPage extends StatelessWidget {
                   const PackDetails(),
                   const ReviewRowButton(totalStars: 5),
                   const Divider(thickness: 0.1),
-                  BuyNowRow(
-                    onBuyButtonTap: () {},
-                    onCartButtonTap: () {},
-                  ),
+                  // BuyNowRow(
+                  //   onBuyButtonTap: () {},
+                  //   onCartButtonTap: () {},
+                  // ),
                 ],
               ),
             ),

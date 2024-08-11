@@ -14,25 +14,25 @@ class NewItemsPage extends StatelessWidget {
         title: const Text('New Item'),
         leading: const AppBackButton(),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
-          child: GridView.builder(
-            padding: const EdgeInsets.only(top: AppDefaults.padding),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 200,
-              childAspectRatio: 0.64,
-              mainAxisSpacing: 16,
-            ),
-            itemCount: 8,
-            itemBuilder: (context, index) {
-              return ProductTileSquare(
-                data: Dummy.products.first,
-              );
-            },
-          ),
-        ),
-      ),
+      // body: SafeArea(
+      //   child: Padding(
+      //     padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
+      //     child: GridView.builder(
+      //       padding: const EdgeInsets.only(top: AppDefaults.padding),
+      //       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+      //         maxCrossAxisExtent: 200,
+      //         childAspectRatio: 0.64,
+      //         mainAxisSpacing: 16,
+      //       ),
+      //       itemCount: 8,
+      //       itemBuilder: (context, index) {
+      //         return ProductTileSquare(
+      //           data: Dummy.products.first,
+      //         );
+      //       },
+      //     ),
+      //   ),
+      // ),
     );
   }
 }

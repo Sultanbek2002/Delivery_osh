@@ -23,24 +23,17 @@ class ProfileHeaderOptions extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           ProfileSqureTile(
-            label: 'All Order',
+            label: 'История',
             icon: AppIcons.truckIcon,
             onTap: () {
               Navigator.pushNamed(context, AppRoutes.myOrder);
             },
           ),
           ProfileSqureTile(
-            label: 'Voucher',
-            icon: AppIcons.voucher,
+            label: 'Нравится',
+            icon: AppIcons.heart,
             onTap: () {
               Navigator.pushNamed(context, AppRoutes.coupon);
-            },
-          ),
-          ProfileSqureTile(
-            label: 'Address',
-            icon: AppIcons.homeProfile,
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.deliveryAddress);
             },
           ),
         ],

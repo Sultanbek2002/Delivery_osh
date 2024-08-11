@@ -1,26 +1,86 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/components/app_back_button.dart';
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_defaults.dart';
 import '../../core/constants/app_icons.dart';
 import '../../core/routes/app_routes.dart';
-import '../../core/utils/ui_util.dart';
-import 'dialogs/product_filters_dialog.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
 
   @override
+  _SearchPageState createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  List<dynamic> allProducts = [];
+  List<dynamic> filteredProducts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
+
+  Future<void> _loadProducts() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? productsData = prefs.getString('products_data');
+    if (productsData != null) {
+      final decodedData = json.decode(productsData) as List<dynamic>;
+      setState(() {
+        allProducts = decodedData;
+        filteredProducts = allProducts;
+      });
+    }
+  }
+
+  void _filterProducts(String query) {
+    final filtered = allProducts.where((product) {
+      final productName = product['ru_name'].toLowerCase();
+      return productName.contains(query.toLowerCase());
+    }).toList();
+    
+    setState(() {
+      filteredProducts = filtered;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            _SearchPageHeader(),
-            SizedBox(height: 8),
-            _RecentSearchList(),
+            _SearchPageHeader(onSearch: _filterProducts),
+            const SizedBox(height: 8),
+            Expanded(
+              child: ListView.builder(
+                itemCount: filteredProducts.length,
+                itemBuilder: (context, index) {
+                  final product = filteredProducts[index];
+                  return ListTile(
+                    title: Text(product['ru_name']),
+                    subtitle: Text('${product['price']} руб'),
+                    leading: Image.network(
+                      'https://dostavka.arendabook.com/images/${product['image']}', // Замените на ваш URL
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.productDetails,
+                        arguments: product,
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -28,51 +88,10 @@ class SearchPage extends StatelessWidget {
   }
 }
 
-class _RecentSearchList extends StatelessWidget {
-  const _RecentSearchList({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Recent Search',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.black,
-                    ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.only(top: 16),
-              itemBuilder: (context, index) {
-                return const SearchHistoryTile();
-              },
-              separatorBuilder: (context, index) => const Divider(
-                thickness: 0.1,
-              ),
-              itemCount: 16,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
 class _SearchPageHeader extends StatelessWidget {
-  const _SearchPageHeader({
-    Key? key,
-  }) : super(key: key);
+  final Function(String) onSearch;
+
+  const _SearchPageHeader({Key? key, required this.onSearch}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -80,89 +99,27 @@ class _SearchPageHeader extends StatelessWidget {
       padding: const EdgeInsets.all(AppDefaults.padding),
       child: Row(
         children: [
-          const AppBackButton(),
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+          ),
           const SizedBox(width: 16),
           Expanded(
-            child: Stack(
-              children: [
-                /// Search Box
-                Form(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Search',
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(AppDefaults.padding),
-                        child: SvgPicture.asset(
-                          AppIcons.search,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      prefixIconConstraints: const BoxConstraints(),
-                      contentPadding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                    textInputAction: TextInputAction.search,
-                    autofocus: true,
-                    onChanged: (String? value) {},
-                    onFieldSubmitted: (v) {
-                      Navigator.pushNamed(context, AppRoutes.searchResult);
-                    },
-                  ),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Поиск',
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.all(AppDefaults.padding),
+                  child: SvgPicture.asset(AppIcons.search),
                 ),
-                Positioned(
-                  right: 0,
-                  height: 56,
-                  child: SizedBox(
-                    width: 56,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        UiUtil.openBottomSheet(
-                          context: context,
-                          widget: const ProductFiltersDialog(),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: SvgPicture.asset(AppIcons.filter),
-                    ),
-                  ),
-                )
-              ],
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                ),
+              ),
+              onChanged: onSearch,
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class SearchHistoryTile extends StatelessWidget {
-  const SearchHistoryTile({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 8,
-          horizontal: 16,
-        ),
-        child: Row(
-          children: [
-            Text(
-              'Vegetables',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const Spacer(),
-            SvgPicture.asset(AppIcons.searchTileArrow),
-          ],
-        ),
       ),
     );
   }

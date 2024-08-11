@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:grocery/core/routes/app_routes.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:grocery/views/auth/number_verification_page.dart';
+import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:io';
-
-import '../../../core/constants/constants.dart';
-import '../../../core/utils/validators.dart';
-import 'sign_up_button.dart';
-import 'already_have_accout.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({Key? key}) : super(key: key);
@@ -27,20 +19,16 @@ class _SignUpFormState extends State<SignUpForm> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
-  File? _avatar;
   String? _errorMessage;
+  bool _isLoading = false;
 
-  Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    setState(() {
-      if (pickedFile != null) {
-        _avatar = File(pickedFile.path);
-      }
-    });
-  }
-
-  void _submitForm() async {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+
       final data = {
         'username': _usernameController.text,
         'firstname': _firstnameController.text,
@@ -50,23 +38,35 @@ class _SignUpFormState extends State<SignUpForm> {
         'password': _passwordController.text,
       };
 
+      // Создаем уникальный токен с помощью UUID
+      final token = Uuid().v4();
+      print('Generated token: $token');
+
       try {
-        final response = await http.post(
-          Uri.parse('http://172.20.10.4:8000/api/register/'), // Замените на адрес вашего сервера
-          headers: {'Content-Type': 'application/json'},
+        var url = Uri.parse('https://dostavka.arendabook.com/api/register');
+        var response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            "X-CSRF-TOKEN":token
+
+          },
           body: json.encode(data),
         );
 
         if (response.statusCode == 200) {
-          // Регистрация успешна, переходим на страницу верификации
-          Navigator.pushNamed(
+          final jsonResponse = jsonDecode(response.body);
+          Navigator.push(
             context,
-            AppRoutes.numberVerification,
-            arguments: {
-              'email': _emailController.text,
-              'password': _passwordController.text,
-            },
+            MaterialPageRoute(
+              builder: (context) => NumberVerificationPage(
+                email: _emailController.text,
+                password: _passwordController.text,
+              ),
+            ),
           );
+        } else if (response.statusCode == 302) {
+          print('Redirect to: ${response.headers['location']}');
         } else {
           setState(() {
             _errorMessage = 'Ошибка регистрации: ${response.statusCode} - ${response.reasonPhrase}';
@@ -74,7 +74,11 @@ class _SignUpFormState extends State<SignUpForm> {
         }
       } catch (e) {
         setState(() {
-          _errorMessage = 'Ошибка при отправке данных: $e';
+          _errorMessage = 'Ошибка при отправке данных ${e}';
+        });
+      } finally {
+        setState(() {
+          _isLoading = false;
         });
       }
     }
@@ -83,112 +87,91 @@ class _SignUpFormState extends State<SignUpForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(AppDefaults.margin),
-      padding: const EdgeInsets.all(AppDefaults.padding),
+      margin: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: AppDefaults.boxShadow,
-        borderRadius: AppDefaults.borderRadius,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [BoxShadow(color: Colors.grey.shade400, blurRadius: 4.0)],
       ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (_errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  _errorMessage!,
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            const Text("Пользователь"),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _usernameController,
-              validator: Validators.requiredWithFieldName('Username'),
-              textInputAction: TextInputAction.next,
-            ),
-            const SizedBox(height: AppDefaults.padding),
-            const Text("Имя"),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _firstnameController,
-              validator: Validators.requiredWithFieldName('First Name'),
-              textInputAction: TextInputAction.next,
-            ),
-            const SizedBox(height: AppDefaults.padding),
-            const Text("Фамилия"),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _lastnameController,
-              validator: Validators.requiredWithFieldName('Last Name'),
-              textInputAction: TextInputAction.next,
-            ),
-            const SizedBox(height: AppDefaults.padding),
-            const Text("Email"),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _emailController,
-              validator: Validators.requiredWithFieldName('Email'),
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-            ),
-            const SizedBox(height: AppDefaults.padding),
-            const Text("Телефон номер"),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _phoneController,
-              validator: Validators.requiredWithFieldName('Phone Number'),
-              keyboardType: TextInputType.phone,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              textInputAction: TextInputAction.next,
-            ),
-            const SizedBox(height: AppDefaults.padding),
-            const Text("Пароль"),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _passwordController,
-              validator: Validators.requiredWithFieldName('Password'),
-              obscureText: true,
-              textInputAction: TextInputAction.done,
-              decoration: InputDecoration(
-                suffixIcon: Material(
-                  color: Colors.transparent,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      AppIcons.eye,
-                      width: 24,
+      child: Stack(
+        children: [
+          Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      _errorMessage!,
+                      style: TextStyle(color: Colors.red),
                     ),
                   ),
+                const Text("Пользователь"),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _usernameController,
+                  validator: (value) => value!.isEmpty ? 'Username is required' : null,
+                  textInputAction: TextInputAction.next,
                 ),
-              ),
-            ),
-            const SizedBox(height: AppDefaults.padding),
-            const Text("Фото профиля"),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                _avatar == null
-                    ? const Text("Выберите фото")
-                    : Image.file(_avatar!, width: 100, height: 100),
-                IconButton(
-                  icon: const Icon(Icons.add_a_photo),
-                  onPressed: _pickImage,
+                const SizedBox(height: 16),
+                const Text("Имя"),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _firstnameController,
+                  validator: (value) => value!.isEmpty ? 'First Name is required' : null,
+                  textInputAction: TextInputAction.next,
+                ),
+                const SizedBox(height: 16),
+                const Text("Фамилия"),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _lastnameController,
+                  validator: (value) => value!.isEmpty ? 'Last Name is required' : null,
+                  textInputAction: TextInputAction.next,
+                ),
+                const SizedBox(height: 16),
+                const Text("Email"),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _emailController,
+                  validator: (value) => value!.isEmpty ? 'Email is required' : null,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                ),
+                const SizedBox(height: 16),
+                const Text("Телефон"),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _phoneController,
+                  validator: (value) => value!.isEmpty ? 'Phone is required' : null,
+                  keyboardType: TextInputType.phone,
+                  textInputAction: TextInputAction.next,
+                ),
+                const SizedBox(height: 16),
+                const Text("Пароль"),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _passwordController,
+                  validator: (value) => value!.isEmpty ? 'Password is required' : null,
+                  obscureText: true,
+                  textInputAction: TextInputAction.done,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _submitForm,
+                  child: const Text('Регистрация'),
                 ),
               ],
             ),
-            const SizedBox(height: AppDefaults.padding),
-            ElevatedButton(
-              onPressed: _submitForm,
-              child: const Text('Регистрация'),
+          ),
+          if (_isLoading)
+            Center(
+              child: CircularProgressIndicator(),
             ),
-            const AlreadyHaveAnAccount(),
-            const SizedBox(height: AppDefaults.padding),
-          ],
-        ),
+        ],
       ),
     );
   }

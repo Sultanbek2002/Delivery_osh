@@ -76,10 +76,16 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => const SavePage());
 
       case AppRoutes.checkoutPage:
-        return CupertinoPageRoute(builder: (_) => const CheckoutPage());
+          final cartItems = settings.arguments as List<Map<String, dynamic>>? ?? [];
+          return CupertinoPageRoute(
+            builder: (_) => CheckoutPage(cartItems: cartItems),
+          );
 
       case AppRoutes.categoryDetails:
-        return CupertinoPageRoute(builder: (_) => const CategoryProductPage());
+        final categoryId = settings.arguments as int;
+        return CupertinoPageRoute(
+          builder: (context) => CategoryProductPage(categoryId: categoryId),
+        );
 
       case AppRoutes.login:
         return CupertinoPageRoute(builder: (_) => const LoginPage());
@@ -91,8 +97,19 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => const LoginOrSignUpPage());
 
       case AppRoutes.numberVerification:
-        return CupertinoPageRoute(
-            builder: (_) => const NumberVerificationPage());
+      return CupertinoPageRoute(
+        builder: (context) {
+          final args = ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
+          final email = args?['email'] ?? '';
+          final password = args?['password'] ?? '';
+
+          return NumberVerificationPage(
+            email: email,
+            password: password,
+          );
+        },
+      );
+
 
       case AppRoutes.forgotPassword:
         return CupertinoPageRoute(builder: (_) => const ForgetPasswordPage());
@@ -113,8 +130,13 @@ class RouteGenerator {
       case AppRoutes.bundleDetailsPage:
         return CupertinoPageRoute(builder: (_) => const BundleDetailsPage());
 
-      case AppRoutes.productDetails:
-        return CupertinoPageRoute(builder: (_) => const ProductDetailsPage());
+       case AppRoutes.productDetails:
+        return CupertinoPageRoute(
+          builder: (context) {
+            final product = settings.arguments as Map<String, dynamic>;
+            return ProductDetailsPage(product: product);
+          },
+        );
 
       case AppRoutes.createMyPack:
         return CupertinoPageRoute(builder: (_) => const BundleCreatePage());

@@ -80,26 +80,26 @@ class _ProductImagesSliderState extends State<ProductImagesSlider> {
               )
             ],
           ),
-          Positioned(
-            right: 0,
-            child: Material(
-              color: Colors.transparent,
-              borderRadius: AppDefaults.borderRadius,
-              child: IconButton(
-                onPressed: () {},
-                iconSize: 56,
-                constraints: const BoxConstraints(minHeight: 56, minWidth: 56),
-                icon: Container(
-                  padding: const EdgeInsets.all(AppDefaults.padding),
-                  decoration: const BoxDecoration(
-                    color: AppColors.scaffoldBackground,
-                    shape: BoxShape.circle,
-                  ),
-                  child: SvgPicture.asset(AppIcons.heart),
-                ),
-              ),
-            ),
-          )
+          // Positioned(
+          //   right: 0,
+          //   child: Material(
+          //     color: Colors.transparent,
+          //     borderRadius: AppDefaults.borderRadius,
+          //     child: IconButton(
+          //       onPressed: () {},
+          //       iconSize: 56,
+          //       constraints: const BoxConstraints(minHeight: 56, minWidth: 56),
+          //       icon: Container(
+          //         padding: const EdgeInsets.all(AppDefaults.padding),
+          //         decoration: const BoxDecoration(
+          //           color: AppColors.scaffoldBackground,
+          //           shape: BoxShape.circle,
+          //         ),
+          //         child: SvgPicture.asset(AppIcons.heart),
+          //       ),
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );

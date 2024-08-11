@@ -18,16 +18,16 @@ class OurNewItem extends StatelessWidget {
           title: 'Our New Item',
           onTap: () => Navigator.pushNamed(context, AppRoutes.newItems),
         ),
-        SingleChildScrollView(
-          padding: const EdgeInsets.only(left: AppDefaults.padding),
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-              Dummy.products.length,
-              (index) => ProductTileSquare(data: Dummy.products[index]),
-            ),
-          ),
-        ),
+        // SingleChildScrollView(
+        //   padding: const EdgeInsets.only(left: AppDefaults.padding),
+        //   scrollDirection: Axis.horizontal,
+        //   child: Row(
+        //     children: List.generate(
+        //       Dummy.products.length,
+        //       (index) => ProductTileSquare(data: Dummy.products[index]),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

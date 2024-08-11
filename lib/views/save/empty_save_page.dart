@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import './api/api_service.dart';
+import 'package:grocery/views/api_routes/apis.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/components/network_image.dart';
 import '../../core/constants/app_defaults.dart';
-import './show_details/show_details.dart'; // Импортируем страницу ShowDetails
+import './show_details/show_details.dart';
 
 class EmptySavePage extends StatefulWidget {
   const EmptySavePage({Key? key}) : super(key: key);
@@ -12,34 +16,162 @@ class EmptySavePage extends StatefulWidget {
 }
 
 class _EmptySavePageState extends State<EmptySavePage> {
-  late Future<List<dynamic>> _futurePosts;
-  final ApiService _apiService = ApiService();
+  late Future<List<dynamic>> _futureOrders;
+  final String _apiUrl = '${ApiConsts.urlbase}/api/order/show';
 
   @override
   void initState() {
     super.initState();
-    _futurePosts = _apiService.fetchPosts();
+    _futureOrders = _fetchOrders();
+  }
+
+  Future<List<dynamic>> _fetchOrders() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString('auth_token');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $userToken',
+    };
+
+    final response = await http.get(Uri.parse(_apiUrl), headers: headers);
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['status']) {
+        // Фильтрация заказов, у которых status_client не равен 0
+        List<dynamic> orders = responseData['orders'];
+        orders = orders.where((order) => order['status_client'] != 0).toList();
+
+        orders.sort((a,b){
+          DateTime dateA = DateTime.parse(a['created_at']);
+          DateTime dateB = DateTime.parse(b['created_at']);
+          return dateB.compareTo(dateA);
+        });
+        return orders;
+      } else {
+        throw Exception('Failed to load orders');
+      }
+    } else {
+      throw Exception('Failed to load orders');
+    }
+  }
+
+  String _getOrderStatus(Map<String, dynamic> order) {
+    if (order['status_get'] == 1) {
+      return 'Полученный';
+    } else if (order['status_set'] == 1) {
+      return 'В пути';
+    } else if (order['status_show'] == 1) {
+      return 'Просмотрен';
+    } else if (order['status_have'] == 1) {
+      return 'Принят';
+    } else {
+      return 'Неизвестный статус';
+    }
+  }
+
+  Color _getOrderStatusColor(Map<String, dynamic> order) {
+    if (order['status_get'] == 1) {
+      return Colors.green;
+    } else if (order['status_set'] == 1) {
+      return Colors.orange;
+    } else if (order['status_show'] == 1) {
+      return Colors.blue;
+    } else if (order['status_have'] == 1) {
+      return Colors.red;
+    } else {
+      return Colors.grey;
+    }
+  }
+
+  Future<void> _cancelOrder(BuildContext context, int orderId) async {
+    String? reason = await _showCancelDialog(context);
+    if (reason == null || reason.isEmpty) {
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString('auth_token');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $userToken',
+    };
+    print(reason);
+
+    try {
+      final response = await http.post(
+        Uri.parse('${ApiConsts.urlbase}/api/order/cancaled/$orderId?comment_client=$reason'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        setState(() {
+          _futureOrders = _fetchOrders();
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Заказ успешно отменен')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ошибка при отмене заказа')),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<String?> _showCancelDialog(BuildContext context) async {
+    TextEditingController _reasonController = TextEditingController();
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Отмена заказа'),
+          content: TextField(
+            controller: _reasonController,
+            decoration: const InputDecoration(hintText: 'Причина отказа'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Отмена'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Отправить'),
+              onPressed: () {
+                Navigator.of(context).pop(_reasonController.text);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Posts List'),
+        title: const Text('Ваши заказы'),
       ),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: FutureBuilder<List<dynamic>>(
-          future: _futurePosts,
+          future: _futureOrders,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(child: Text('Ошибка: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return _buildEmptyWishlist(context);
             } else {
-              return _buildPostList(context, snapshot.data!);
+              return _buildOrderList(context, snapshot.data!);
             }
           },
         ),
@@ -66,45 +198,65 @@ class _EmptySavePageState extends State<EmptySavePage> {
             ),
           ),
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'Oops!',
-           
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          const Text('Sorry, no posts found.'),
+          const Text('У вас нет заказов'),
           const Spacer(),
         ],
       ),
     );
   }
 
-  Widget _buildPostList(BuildContext context, List<dynamic> posts) {
-    return ListView.builder(
-      itemCount: posts.length,
+  Widget _buildOrderList(BuildContext context, List<dynamic> orders) {
+    return ListView.separated(
+      itemCount: orders.length,
+      separatorBuilder: (context, index) => const Divider(),
       itemBuilder: (context, index) {
-        var post = posts[index];
+        var order = orders[index];
+        var orderDate = DateTime.parse(order['created_at']);
+        var formattedDate = "${orderDate.day}/${orderDate.month}/${orderDate.year}-${orderDate.hour}:${orderDate.minute}";
+        var orderStatus = _getOrderStatus(order);
+        var orderStatusColor = _getOrderStatusColor(order);
+
         return ListTile(
-          title: Text(post['title']),
+          title: Text('Сумма заказа: ${order['all_summa']} сом'),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('ID: ${post['id']}'),
-              Text('User ID: ${post['userId']}'),
+              Text('Дата: $formattedDate'),
+              Text('Адрес: ${order['map']}'),
+              Container(
+                margin: const EdgeInsets.only(top: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                color: orderStatusColor,
+                child: Text(
+                  'Статус: $orderStatus',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
             ],
           ),
+          trailing: IconButton(
+            icon: const Icon(Icons.cancel),
+            color: Colors.red,
+            onPressed: () => _cancelOrder(context, order['id']),
+          ),
           onTap: () {
-            _showPostDetails(context, post['id']); // Передаем id поста
+            _showOrderDetails(context, order['id']);
           },
         );
       },
     );
   }
 
-  void _showPostDetails(BuildContext context, int postId) {
+  void _showOrderDetails(BuildContext context, int orderId) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ShowDetails(postId: postId), // Передаем postId
+        builder: (context) => ShowDetails(postId: orderId),
       ),
     );
   }

@@ -1,13 +1,13 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../core/apis/api_product.dart';
 import '../../../core/components/bundle_tile_square.dart';
 import '../../../core/components/title_and_action_button.dart';
 import '../../../core/constants/constants.dart';
 import '../../../core/routes/app_routes.dart';
-import '../../../core/models/product_model.dart';
+import '../../api_routes/apis.dart';
 
 class PopularPacks extends StatefulWidget {
   const PopularPacks({Key? key}) : super(key: key);
@@ -17,45 +17,80 @@ class PopularPacks extends StatefulWidget {
 }
 
 class _PopularPacksState extends State<PopularPacks> {
-  late Future<List<ProductModel>> _futureProducts;
-  final ApiService _apiService = ApiService();
+  late Future<List<dynamic>> _futureProducts;
 
   @override
   void initState() {
     super.initState();
-    _futureProducts = _apiService.fetchProducts();
+    _futureProducts = fetchProducts();
   }
 
+  Future<List<dynamic>> fetchProducts() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? accessToken = prefs.getString('auth_token');
+
+    final response = await http.get(
+      Uri.parse('${ApiConsts.urlbase}/api/all-Product'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      // Save data to SharedPreferences
+      await prefs.setString('products_data', json.encode(data['product']));
+
+      return data['product'];
+    } else {
+      throw Exception('Failed to load products: ${response.body}');
+    }
+  }
+
+  Future<List<dynamic>> _loadProductsFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? productsData = prefs.getString('products_data');
+    if (productsData != null) {
+      return json.decode(productsData);
+    } else {
+      return [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TitleAndActionButton(
-          title: 'Популярные продукты',
-          onTap: () => Navigator.pushNamed(context, AppRoutes.popularItems),
+        Text(
+           'Популярные продукты' ,
+           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        FutureBuilder<List<ProductModel>>(
+        FutureBuilder<List<dynamic>>(
           future: _futureProducts,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(child: Text('Ошибка: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No popular packs found'));
+              return const Center(child: Text('Популярные товары не найдены'));
             } else {
-              return SingleChildScrollView(
-                padding: const EdgeInsets.only(left: AppDefaults.padding),
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: snapshot.data!.map((product) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: AppDefaults.padding),
-                      child: BundleTileSquare(data: product),
-                    );
-                  }).toList(),
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(AppDefaults.padding),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Display 2 items per row
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 0.8, // Adjusted ratio to fit content better
                 ),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  return BundleTileSquare(data: snapshot.data![index]);
+                },
               );
             }
           },
@@ -68,7 +103,7 @@ class _PopularPacksState extends State<PopularPacks> {
 class BundleTileSquare extends StatelessWidget {
   const BundleTileSquare({Key? key, required this.data}) : super(key: key);
 
-  final ProductModel data;
+  final dynamic data;
 
   @override
   Widget build(BuildContext context) {
@@ -77,56 +112,55 @@ class BundleTileSquare extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () {
-          if (data != null) {
-            print("dsafkjasjkfnajkfansdkfjdsaf");
-            print(data);
-            Navigator.pushNamed(
-              context,
-              AppRoutes.productDetails,
-              arguments: data,
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Invalid product details')),
-            );
-          }
+          Navigator.pushNamed(
+            context,
+            AppRoutes.productDetails,
+            arguments: data,
+          );
         },
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          width: 176,
-          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            border: Border.all(width: 0.1, color: Colors.grey),
+            border: Border.all(width: 0.1, color: const Color.fromARGB(255, 39, 37, 37)),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AspectRatio(
-                aspectRatio: 1,
-                child: Image.network(
-                  data.image,
-                  fit: BoxFit.cover,
+              Expanded(
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Image.network(
+                    'https://dostavka.arendabook.com/images/${data['image']}',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                data.title,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data['name'],
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      data['description'],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${data['price']} сом',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
-              Text(
-                data.description,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '${data.price} сом',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
             ],
           ),
         ),

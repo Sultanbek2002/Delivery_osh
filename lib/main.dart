@@ -9,7 +9,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure that plugin services are initialized
 
   final prefs = await SharedPreferences.getInstance();
-  final String? accessToken = prefs.getString('accessToken');
+  final String? accessToken = prefs.getString('auth_token');
+  print(accessToken);
 
   runApp(MyApp(accessToken: accessToken));
 }
@@ -30,3 +31,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// final double price = double.tryParse(product['price'].toString()) ?? 0.0;

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:grocery/views/entrypoint/entrypoint_ui.dart';
+import 'package:grocery/views/save/empty_save_page.dart';
 
 import '../../core/components/network_image.dart';
 import '../../core/constants/app_defaults.dart';
@@ -32,7 +34,7 @@ class OrderSuccessfullPage extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  'Order Placed Successfully',
+                  'Заказ успешно отправлен',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -44,7 +46,7 @@ class OrderSuccessfullPage extends StatelessWidget {
                   padding:
                       EdgeInsets.symmetric(horizontal: AppDefaults.padding),
                   child: Text(
-                    'Thanks for your order. Your order has placed successfully. Please continue your order.',
+                    'Вы можете контролировать своим заказом. Можете видеть статус вашего заказа.',
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -64,10 +66,10 @@ class OrderSuccessfullPage extends StatelessWidget {
                       onPressed: () {
                         UiUtil.openDialog(
                           context: context,
-                          widget: const DeliverySuccessfullDialog(),
+                          widget: const EntryPointUI(),
                         );
                       },
-                      child: const Text('Continue'),
+                      child: const Text('Главная'),
                     ),
                   ),
                 ),
@@ -78,8 +80,13 @@ class OrderSuccessfullPage extends StatelessWidget {
                   child: SizedBox(
                     width: double.infinity,
                     child: TextButton(
-                      onPressed: () {},
-                      child: const Text('Track Order'),
+                      onPressed: () {
+                        UiUtil.openDialog(
+                          context: context,
+                          widget: const EmptySavePage()
+                        );
+                      },
+                      child: const Text('Ваши заказы'),
                     ),
                   ),
                 ),

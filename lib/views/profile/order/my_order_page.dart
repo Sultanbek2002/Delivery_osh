@@ -17,13 +17,13 @@ class AllOrderPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           leading: const AppBackButton(),
-          title: const Text('My Order'),
+          title: const Text('Мои заказы'),
           bottom: const TabBar(
             physics: NeverScrollableScrollPhysics(),
             tabs: [
-              CustomTabLabel(label: 'All', value: '(58)'),
-              CustomTabLabel(label: 'Running', value: '(14)'),
-              CustomTabLabel(label: 'Previous', value: '(44)'),
+              CustomTabLabel(label: 'Полученные', value: ''),
+              CustomTabLabel(label: 'Отмененные', value: ''),
+
             ],
           ),
         ),
@@ -31,9 +31,8 @@ class AllOrderPage extends StatelessWidget {
           color: AppColors.cardColor,
           child: const TabBarView(
             children: [
-              AllTab(),
+              ReceivedOrdersPage(),
               RunningTab(),
-              CompletedTab(),
             ],
           ),
         ),

@@ -5,21 +5,21 @@ class OnboardingData {
   static List<OnboardingModel> items = [
     OnboardingModel(
       imageUrl: AppImages.onboarding1,
-      headline: 'Browse all the category',
+      headline: 'Много различных продуктов',
       description:
-          'In aliquip aute exercitation ut et nisi ut mollit. Deserunt dolor elit pariatur aute .',
+          '',
     ),
     OnboardingModel(
       imageUrl: AppImages.onboarding2,
-      headline: 'Amazing Discounts & Offers',
+      headline: 'В удобное и любое время',
       description:
-          'In aliquip aute exercitation ut et nisi ut mollit. Deserunt dolor elit pariatur aute .',
+          '',
     ),
     OnboardingModel(
       imageUrl: AppImages.onboarding3,
-      headline: 'Delivery in 30 Min',
+      headline: 'Быстрая доставка на ваш адрес',
       description:
-          'In aliquip aute exercitation ut et nisi ut mollit. Deserunt dolor elit pariatur aute .',
+          '',
     ),
   ];
 }

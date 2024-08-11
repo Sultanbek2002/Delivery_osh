@@ -32,9 +32,10 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               floating: true,
-              title: SvgPicture.asset(
-                "assets/images/app_logo.svg",
-                height: 32,
+              title:Image.asset(
+                "assets/images/app_logo_splash.png",
+                height:100,
+                width: 200
               ),
               actions: [
                 Padding(

@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/components/network_image.dart';
 import '../../../core/constants/constants.dart';
 
 class SingleCartItemTile extends StatelessWidget {
+  final Map<String, dynamic> item;
+  final void Function(Map<String, dynamic>) onUpdateQuantity;
+  final void Function(Map<String, dynamic>) onRemove;
+
   const SingleCartItemTile({
     Key? key,
+    required this.item,
+    required this.onUpdateQuantity,
+    required this.onRemove,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    int quantity = item['quantity'] ?? 1;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppDefaults.padding,
@@ -21,12 +29,12 @@ class SingleCartItemTile extends StatelessWidget {
           Row(
             children: [
               /// Thumbnail
-              const SizedBox(
+              SizedBox(
                 width: 70,
                 child: AspectRatio(
                   aspectRatio: 1 / 1,
                   child: NetworkImageWithLoader(
-                    'https://i.imgur.com/4YEHvGc.png',
+                    'https://dostavka.arendabook.com/images/${item['image']}',
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -43,14 +51,14 @@ class SingleCartItemTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Sulphurfree Bura',
+                          item['name'],
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
                               ?.copyWith(color: Colors.black),
                         ),
                         Text(
-                          '570 Ml',
+                          '$quantity шт.',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -59,24 +67,33 @@ class SingleCartItemTile extends StatelessWidget {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () {},
-                        icon: SvgPicture.asset(AppIcons.addQuantity),
+                        onPressed: () {
+                          if (quantity > 1) {
+                            quantity -= 1;
+                            item['quantity'] = quantity;
+                            onUpdateQuantity(item);
+                          }
+                        },
+                        icon: SvgPicture.asset(AppIcons.removeQuantity),
                         constraints: const BoxConstraints(),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          '1',
-                          style:
-                              Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
+                          '$quantity',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
-                        icon: SvgPicture.asset(AppIcons.removeQuantity),
+                        onPressed: () {
+                          quantity += 1;
+                          item['quantity'] = quantity;
+                          onUpdateQuantity(item);
+                        },
+                        icon: SvgPicture.asset(AppIcons.addQuantity),
                         constraints: const BoxConstraints(),
                       ),
                     ],
@@ -90,11 +107,13 @@ class SingleCartItemTile extends StatelessWidget {
                 children: [
                   IconButton(
                     constraints: const BoxConstraints(),
-                    onPressed: () {},
+                    onPressed: () {
+                      onRemove(item);
+                    },
                     icon: SvgPicture.asset(AppIcons.delete),
                   ),
                   const SizedBox(height: 16),
-                  const Text('\$20'),
+                  Text('\$${item['price']}'),
                 ],
               )
             ],
