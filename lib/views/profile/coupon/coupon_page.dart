@@ -59,7 +59,7 @@ class _CouponAndOffersPageState extends State<CouponAndOffersPage> {
                     width: 50,
                     height: 50,
                   ),
-                  title: Text(product['name']),
+                  title: Text(product['ru_name']),
                   subtitle: Text('${product['price']} сом'),
                   onTap: () {
                     Navigator.pushNamed(

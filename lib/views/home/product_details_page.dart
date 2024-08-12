@@ -135,7 +135,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        product['name'],
+                        product['ru_name'],
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -167,7 +167,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    product['description'],
+                    product['ru_description'],
                     textAlign: TextAlign.center,
                   ),
                 ],

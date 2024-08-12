@@ -85,42 +85,50 @@ class _EmptySavePageState extends State<EmptySavePage> {
     }
   }
 
-  Future<void> _cancelOrder(BuildContext context, int orderId) async {
-    String? reason = await _showCancelDialog(context);
-    if (reason == null || reason.isEmpty) {
-      return;
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    final userToken = prefs.getString('auth_token');
-
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $userToken',
-    };
-    print(reason);
-
-    try {
-      final response = await http.post(
-        Uri.parse('${ApiConsts.urlbase}/api/order/cancaled/$orderId?comment_client=$reason'),
-        headers: headers,
-      );
-      if (response.statusCode == 200) {
-        setState(() {
-          _futureOrders = _fetchOrders();
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Заказ успешно отменен')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ошибка при отмене заказа')),
-        );
-      }
-    } catch (e) {
-      print(e);
-    }
+  Future<void> _cancelOrder(BuildContext context, int orderId, Map<String, dynamic> order) async {
+  if (order['status_get'] == 1 || order['status_set'] == 1) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Вы не можете удалить этот заказ, так как он уже получен или в пути')),
+    );
+    return;
   }
+
+  String? reason = await _showCancelDialog(context);
+  if (reason == null || reason.isEmpty) {
+    return;
+  }
+
+  final prefs = await SharedPreferences.getInstance();
+  final userToken = prefs.getString('auth_token');
+
+  final headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $userToken',
+  };
+  print(reason);
+
+  try {
+    final response = await http.post(
+      Uri.parse('${ApiConsts.urlbase}/api/order/cancaled/$orderId?comment_client=$reason'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        _futureOrders = _fetchOrders();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Заказ успешно отменен')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ошибка при отмене заказа')),
+      );
+    }
+  } catch (e) {
+    print(e);
+  }
+}
+
 
   Future<String?> _showCancelDialog(BuildContext context) async {
     TextEditingController _reasonController = TextEditingController();
@@ -242,7 +250,7 @@ class _EmptySavePageState extends State<EmptySavePage> {
           trailing: IconButton(
             icon: const Icon(Icons.cancel),
             color: Colors.red,
-            onPressed: () => _cancelOrder(context, order['id']),
+            onPressed: () => _cancelOrder(context, order['id'],order),
           ),
           onTap: () {
             _showOrderDetails(context, order['id']);
@@ -256,7 +264,7 @@ class _EmptySavePageState extends State<EmptySavePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ShowDetails(postId: orderId),
+        builder: (context) => ShowDetails(orderId: orderId),
       ),
     );
   }
