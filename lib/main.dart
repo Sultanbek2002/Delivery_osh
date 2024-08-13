@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'core/routes/app_routes.dart';
 import 'core/routes/on_generate_route.dart';
@@ -12,7 +13,13 @@ Future<void> main() async {
   final String? accessToken = prefs.getString('auth_token');
   print(accessToken);
 
-  runApp(MyApp(accessToken: accessToken));
+  // Check connectivity
+  final ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
+  if (connectivityResult == ConnectivityResult.none) {
+    runApp(NoInternetApp());
+  } else {
+    runApp(MyApp(accessToken: accessToken));
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -32,4 +39,19 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// final double price = double.tryParse(product['price'].toString()) ?? 0.0;
+class NoInternetApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'eGrocery',
+      theme: AppTheme.defaultTheme,
+      home: Scaffold(
+        appBar: AppBar(title: Text('Нет подклячение')),
+        body: Center(
+          child: Text('Пожалуйста, проверте подключение к интернету.'),
+        ),
+      ),
+    );
+  }
+}
