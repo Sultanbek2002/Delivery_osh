@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:grocery/views/entrypoint/entrypoint_ui.dart';
-import 'package:grocery/views/save/empty_save_page.dart';
+import 'package:green_life/views/entrypoint/entrypoint_ui.dart';
+import 'package:green_life/views/save/empty_save_page.dart';
 
 import '../../core/components/network_image.dart';
 import '../../core/constants/app_defaults.dart';
@@ -13,6 +13,7 @@ class OrderSuccessfullPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: [
           const Spacer(flex: 2),
@@ -82,9 +83,7 @@ class OrderSuccessfullPage extends StatelessWidget {
                     child: TextButton(
                       onPressed: () {
                         UiUtil.openDialog(
-                          context: context,
-                          widget: const EmptySavePage()
-                        );
+                            context: context, widget: const EmptySavePage());
                       },
                       child: const Text('Ваши заказы'),
                     ),

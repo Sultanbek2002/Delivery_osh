@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:grocery/views/api_routes/apis.dart';
+import 'package:green_life/views/api_routes/apis.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/components/network_image.dart';
@@ -43,7 +43,7 @@ class _EmptySavePageState extends State<EmptySavePage> {
         List<dynamic> orders = responseData['orders'];
         orders = orders.where((order) => order['status_client'] != 0).toList();
 
-        orders.sort((a,b){
+        orders.sort((a, b) {
           DateTime dateA = DateTime.parse(a['created_at']);
           DateTime dateB = DateTime.parse(b['created_at']);
           return dateB.compareTo(dateA);
@@ -85,50 +85,53 @@ class _EmptySavePageState extends State<EmptySavePage> {
     }
   }
 
-  Future<void> _cancelOrder(BuildContext context, int orderId, Map<String, dynamic> order) async {
-  if (order['status_get'] == 1 || order['status_set'] == 1) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Вы не можете удалить этот заказ, так как он уже получен или в пути')),
-    );
-    return;
-  }
-
-  String? reason = await _showCancelDialog(context);
-  if (reason == null || reason.isEmpty) {
-    return;
-  }
-
-  final prefs = await SharedPreferences.getInstance();
-  final userToken = prefs.getString('auth_token');
-
-  final headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer $userToken',
-  };
-  print(reason);
-
-  try {
-    final response = await http.post(
-      Uri.parse('${ApiConsts.urlbase}/api/order/cancaled/$orderId?comment_client=$reason'),
-      headers: headers,
-    );
-    if (response.statusCode == 200) {
-      setState(() {
-        _futureOrders = _fetchOrders();
-      });
+  Future<void> _cancelOrder(
+      BuildContext context, int orderId, Map<String, dynamic> order) async {
+    if (order['status_get'] == 1 || order['status_set'] == 1) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Заказ успешно отменен')),
+        const SnackBar(
+            content: Text(
+                'Вы не можете удалить этот заказ, так как он уже получен или в пути')),
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ошибка при отмене заказа')),
-      );
+      return;
     }
-  } catch (e) {
-    print(e);
-  }
-}
 
+    String? reason = await _showCancelDialog(context);
+    if (reason == null || reason.isEmpty) {
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString('auth_token');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $userToken',
+    };
+    print(reason);
+
+    try {
+      final response = await http.post(
+        Uri.parse(
+            '${ApiConsts.urlbase}/api/order/cancaled/$orderId?comment_client=$reason'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        setState(() {
+          _futureOrders = _fetchOrders();
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Заказ успешно отменен')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ошибка при отмене заказа')),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   Future<String?> _showCancelDialog(BuildContext context) async {
     TextEditingController _reasonController = TextEditingController();
@@ -225,7 +228,8 @@ class _EmptySavePageState extends State<EmptySavePage> {
       itemBuilder: (context, index) {
         var order = orders[index];
         var orderDate = DateTime.parse(order['created_at']);
-        var formattedDate = "${orderDate.day}/${orderDate.month}/${orderDate.year}-${orderDate.hour}:${orderDate.minute}";
+        var formattedDate =
+            "${orderDate.day}/${orderDate.month}/${orderDate.year}-${orderDate.hour}:${orderDate.minute}";
         var orderStatus = _getOrderStatus(order);
         var orderStatusColor = _getOrderStatusColor(order);
 
@@ -238,7 +242,8 @@ class _EmptySavePageState extends State<EmptySavePage> {
               Text('Адрес: ${order['map']}'),
               Container(
                 margin: const EdgeInsets.only(top: 8.0),
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 color: orderStatusColor,
                 child: Text(
                   'Статус: $orderStatus',
@@ -250,7 +255,7 @@ class _EmptySavePageState extends State<EmptySavePage> {
           trailing: IconButton(
             icon: const Icon(Icons.cancel),
             color: Colors.red,
-            onPressed: () => _cancelOrder(context, order['id'],order),
+            onPressed: () => _cancelOrder(context, order['id'], order),
           ),
           onTap: () {
             _showOrderDetails(context, order['id']);

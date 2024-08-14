@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:grocery/views/api_routes/apis.dart';
+import 'package:green_life/views/api_routes/apis.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/constants.dart';
@@ -10,14 +10,16 @@ import '../../core/components/product_tile_square.dart';
 class CategoryProductPage extends StatefulWidget {
   final int categoryId;
 
-  const CategoryProductPage({Key? key, required this.categoryId}) : super(key: key);
+  const CategoryProductPage({Key? key, required this.categoryId})
+      : super(key: key);
 
   @override
   _CategoryProductPageState createState() => _CategoryProductPageState();
 }
 
 class _CategoryProductPageState extends State<CategoryProductPage> {
-  List<Map<String, dynamic>> products = []; // Измените на List<Map<String, dynamic>>
+  List<Map<String, dynamic>> products =
+      []; // Измените на List<Map<String, dynamic>>
   bool isLoading = true;
 
   @override

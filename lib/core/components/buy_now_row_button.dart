@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:grocery/core/routes/app_routes.dart';
+import 'package:green_life/core/routes/app_routes.dart';
 
 import '../constants/constants.dart';
 
@@ -34,7 +34,9 @@ class BuyNowRow extends StatelessWidget {
           const SizedBox(width: AppDefaults.padding),
           Expanded(
             child: ElevatedButton(
-              onPressed:(){Navigator.pushNamed(context, AppRoutes.cartPage);},
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.cartPage);
+              },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(AppDefaults.padding * 1.2),
               ),

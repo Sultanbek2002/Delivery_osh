@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:grocery/views/api_routes/apis.dart';
+import 'package:green_life/views/api_routes/apis.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/components/app_back_button.dart';
@@ -31,7 +31,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
 
     final prefs = await SharedPreferences.getInstance();
-    final userToken = prefs.getString('auth_token'); // Замените на ваш метод получения токена
+    final userToken =
+        prefs.getString('auth_token'); // Замените на ваш метод получения токена
 
     final headers = {
       'Content-Type': 'application/json',
@@ -39,10 +40,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
     };
     final body = json.encode({
       'map': _addressController.text, // Используем значение из текстового поля
-      'products': widget.cartItems.map((item) => {
-        'product_id': item['id'],
-        'quantity': item['quantity'],
-      }).toList(),
+      'products': widget.cartItems
+          .map((item) => {
+                'product_id': item['id'],
+                'quantity': item['quantity'],
+              })
+          .toList(),
     });
 
     showDialog(
@@ -54,7 +57,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
 
     try {
-      final response = await http.post(Uri.parse("${ApiConsts.urlbase}/api/Order"), headers: headers, body: body);
+      final response = await http.post(
+          Uri.parse("${ApiConsts.urlbase}/api/Order"),
+          headers: headers,
+          body: body);
       Navigator.pop(context);
 
       if (response.statusCode == 200) {
@@ -92,10 +98,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   Widget build(BuildContext context) {
     // Рассчёт общего количества товаров
-    final double totalItems = widget.cartItems.fold<double>(0, (sum, item) => sum + (item['quantity'] ?? 1));
+    final double totalItems = widget.cartItems
+        .fold<double>(0, (sum, item) => sum + (item['quantity'] ?? 1));
 
     // Рассчёт общей суммы
-    final double totalPrice = widget.cartItems.fold<double>(0.0, (sum, item) => sum + ((item['quantity'] ?? 1) * (double.tryParse(item['price']) ?? 0.0)));
+    final double totalPrice = widget.cartItems.fold<double>(
+        0.0,
+        (sum, item) =>
+            sum +
+            ((item['quantity'] ?? 1) *
+                (double.tryParse(item['price']) ?? 0.0)));
 
     return Scaffold(
       appBar: AppBar(
@@ -125,11 +137,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
                 const SizedBox(height: AppDefaults.padding),
                 // Отображение списка товаров в корзине
-                ...widget.cartItems.map((item) => ListTile(
-                  title: Text(item['name']),
-                  subtitle: Text('${item['quantity']} шт.'),
-                  trailing: Text('${item['price']} сом'),
-                )).toList(),
+                ...widget.cartItems
+                    .map((item) => ListTile(
+                          title: Text(item['name']),
+                          subtitle: Text('${item['quantity']} шт.'),
+                          trailing: Text('${item['price']} сом'),
+                        ))
+                    .toList(),
                 const Divider(),
                 // Отображение общего количества товаров
                 ListTile(

@@ -4,7 +4,6 @@ import '../../../core/components/app_back_button.dart';
 import '../../../core/constants/app_colors.dart';
 import 'components/custom_tab_label.dart';
 import 'components/tab_all.dart';
-import 'components/tab_completed.dart';
 import 'components/tab_running.dart';
 
 class AllOrderPage extends StatelessWidget {
@@ -13,7 +12,7 @@ class AllOrderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           leading: const AppBackButton(),
@@ -23,7 +22,6 @@ class AllOrderPage extends StatelessWidget {
             tabs: [
               CustomTabLabel(label: 'Полученные', value: ''),
               CustomTabLabel(label: 'Отмененные', value: ''),
-
             ],
           ),
         ),

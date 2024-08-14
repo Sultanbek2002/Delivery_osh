@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:grocery/core/routes/app_routes.dart';
-import 'package:grocery/views/cart/checkout_page.dart';
+import 'package:green_life/core/routes/app_routes.dart';
+import 'package:green_life/views/cart/checkout_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/components/app_back_button.dart';
 import '../../core/constants/app_defaults.dart';
@@ -44,10 +44,13 @@ class _CartPageState extends State<CartPage> {
 
     if (productsData != null) {
       final List<dynamic> jsonList = json.decode(productsData);
-      _allProducts = jsonList.map((item) => Map<String, dynamic>.from(item)).toList();
+      _allProducts =
+          jsonList.map((item) => Map<String, dynamic>.from(item)).toList();
 
       // Сопоставляем продукты в корзине с данными о продуктах
-      _cartItems = _allProducts.where((product) => cart.contains(product['id'].toString())).toList();
+      _cartItems = _allProducts
+          .where((product) => cart.contains(product['id'].toString()))
+          .toList();
 
       // Устанавливаем quantity по умолчанию, если он отсутствует
       for (var item in _cartItems) {
@@ -117,11 +120,13 @@ class _CartPageState extends State<CartPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              ..._cartItems.map((item) => SingleCartItemTile(
-                    item: item,
-                    onUpdateQuantity: _updateCartItem,
-                    onRemove: _removeCartItem,
-                  )).toList(),
+              ..._cartItems
+                  .map((item) => SingleCartItemTile(
+                        item: item,
+                        onUpdateQuantity: _updateCartItem,
+                        onRemove: _removeCartItem,
+                      ))
+                  .toList(),
               ItemTotalsAndPrice(cartItems: _cartItems),
               SizedBox(
                 width: double.infinity,

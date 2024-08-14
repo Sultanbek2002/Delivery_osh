@@ -6,7 +6,8 @@ import 'core/routes/on_generate_route.dart';
 import 'core/themes/app_themes.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure that plugin services are initialized
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Ensure that plugin services are initialized
 
   final prefs = await SharedPreferences.getInstance();
   final String? accessToken = prefs.getString('auth_token');
@@ -23,11 +24,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false ,
-      title: 'eGrocery',
+      debugShowCheckedModeBanner: false,
+      title: 'egreen_life',
       theme: AppTheme.defaultTheme,
       onGenerateRoute: RouteGenerator.onGenerate,
-      initialRoute: accessToken != null ? AppRoutes.entryPoint : AppRoutes.onboarding,
+      initialRoute:
+          accessToken != null ? AppRoutes.entryPoint : AppRoutes.onboarding,
     );
   }
 }

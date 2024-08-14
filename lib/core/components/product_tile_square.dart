@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grocery/views/api_routes/apis.dart';
+import 'package:green_life/views/api_routes/apis.dart';
 
 import '../constants/constants.dart';
 
@@ -51,18 +51,17 @@ class ProductTileSquare extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                data['ru_name'] != null && data['ru_name'].isNotEmpty
-                    ? data['ru_name']
-                    : 'Название отсутствует',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(color: Colors.black),
-                maxLines: 2,
-                
-              ),
+                  data['ru_name'] != null && data['ru_name'].isNotEmpty
+                      ? data['ru_name']
+                      : 'Название отсутствует',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(color: Colors.black),
+                  maxLines: 2,
+                ),
 
-              const SizedBox(height: 4), // Увеличьте отступ, если необходимо
+                const SizedBox(height: 4), // Увеличьте отступ, если необходимо
 
                 Row(
                   mainAxisSize: MainAxisSize.min,
@@ -76,7 +75,6 @@ class ProductTileSquare extends StatelessWidget {
                           ?.copyWith(color: Colors.black),
                     ),
                     const SizedBox(width: 4),
-                    
                   ],
                 )
               ],

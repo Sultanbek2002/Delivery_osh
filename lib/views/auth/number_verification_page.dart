@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:grocery/core/components/network_image.dart';
-import 'package:grocery/core/constants/app_colors.dart';
-import 'package:grocery/core/constants/app_defaults.dart';
-import 'package:grocery/core/constants/app_images.dart';
-import 'package:grocery/core/routes/app_routes.dart';
-import 'package:grocery/core/themes/app_themes.dart';
+import 'package:green_life/core/components/network_image.dart';
+import 'package:green_life/core/constants/app_colors.dart';
+import 'package:green_life/core/constants/app_defaults.dart';
+import 'package:green_life/core/constants/app_images.dart';
+import 'package:green_life/core/routes/app_routes.dart';
+import 'package:green_life/core/themes/app_themes.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '.././api_routes/apis.dart';
@@ -29,7 +29,8 @@ class NumberVerificationPage extends StatefulWidget {
 class _NumberVerificationPageState extends State<NumberVerificationPage> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
-  final List<TextEditingController> _otpControllers = List.generate(4, (_) => TextEditingController());
+  final List<TextEditingController> _otpControllers =
+      List.generate(4, (_) => TextEditingController());
   String? _errorMessage;
   String? _verificationCode;
   bool _isLoading = false;
@@ -115,7 +116,8 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
         }
       } else {
         setState(() {
-          _errorMessage = 'Ошибка верификации: ${response.statusCode} - ${response.reasonPhrase}';
+          _errorMessage =
+              'Ошибка верификации: ${response.statusCode} - ${response.reasonPhrase}';
         });
       }
     } catch (e) {
@@ -165,16 +167,14 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
       } else {
         print("1");
         setState(() {
-
-          _errorMessage = 'Ошибка при отправке данных1: ${response.statusCode} - ${response.reasonPhrase}';
-          
+          _errorMessage =
+              'Ошибка при отправке данных1: ${response.statusCode} - ${response.reasonPhrase}';
         });
       }
     } catch (e) {
       print("2");
       setState(() {
         _errorMessage = 'Ошибка при отправке данных2: $e';
-        
       });
     } finally {
       setState(() {
@@ -207,8 +207,7 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
                         onCodeEntered: _verifyCode,
                       ),
                       SizedBox(height: AppDefaults.padding * 3),
-                      if (_isLoading)
-                        CircularProgressIndicator(),
+                      if (_isLoading) CircularProgressIndicator(),
                       ResendButton(onPressed: _requestVerificationCode),
                       SizedBox(height: AppDefaults.padding),
                       if (_errorMessage != null)
@@ -297,7 +296,8 @@ class VerifyButton extends StatelessWidget {
                 print('Ошибка: Код верификации отсутствует в ответе.');
               }
             } else {
-              print('Ошибка при отправке данных: ${response.statusCode} - ${response.reasonPhrase}');
+              print(
+                  'Ошибка при отправке данных: ${response.statusCode} - ${response.reasonPhrase}');
             }
           } catch (e) {
             print('Ошибка при отправке данных: $e');
@@ -370,7 +370,8 @@ class OTPTextFields extends StatelessWidget {
                   FocusScope.of(context).previousFocus();
                 }
 
-                if (controllers.every((controller) => controller.text.length == 1)) {
+                if (controllers
+                    .every((controller) => controller.text.length == 1)) {
                   onCodeEntered();
                 }
               },

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grocery/views/auth/number_verification_page.dart';
+import 'package:green_life/views/auth/number_verification_page.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -46,11 +46,7 @@ class _SignUpFormState extends State<SignUpForm> {
         var url = Uri.parse('https://dostavka.arendabook.com/api/register');
         var response = await http.post(
           url,
-          headers: {
-            'Content-Type': 'application/json',
-            "X-CSRF-TOKEN":token
-
-          },
+          headers: {'Content-Type': 'application/json', "X-CSRF-TOKEN": token},
           body: json.encode(data),
         );
 
@@ -69,7 +65,8 @@ class _SignUpFormState extends State<SignUpForm> {
           print('Redirect to: ${response.headers['location']}');
         } else {
           setState(() {
-            _errorMessage = 'Ошибка регистрации: ${response.statusCode} - ${response.reasonPhrase}';
+            _errorMessage =
+                'Ошибка регистрации: ${response.statusCode} - ${response.reasonPhrase}';
           });
         }
       } catch (e) {
@@ -113,7 +110,8 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _usernameController,
-                  validator: (value) => value!.isEmpty ? 'Username is required' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Username is required' : null,
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
@@ -121,7 +119,8 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _firstnameController,
-                  validator: (value) => value!.isEmpty ? 'First Name is required' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'First Name is required' : null,
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
@@ -129,7 +128,8 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _lastnameController,
-                  validator: (value) => value!.isEmpty ? 'Last Name is required' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Last Name is required' : null,
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
@@ -137,7 +137,8 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _emailController,
-                  validator: (value) => value!.isEmpty ? 'Email is required' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Email is required' : null,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                 ),
@@ -146,7 +147,8 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _phoneController,
-                  validator: (value) => value!.isEmpty ? 'Phone is required' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Phone is required' : null,
                   keyboardType: TextInputType.phone,
                   textInputAction: TextInputAction.next,
                 ),
@@ -155,7 +157,8 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _passwordController,
-                  validator: (value) => value!.isEmpty ? 'Password is required' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Password is required' : null,
                   obscureText: true,
                   textInputAction: TextInputAction.done,
                 ),

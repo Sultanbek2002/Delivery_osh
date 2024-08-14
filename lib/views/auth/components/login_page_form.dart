@@ -47,15 +47,15 @@ class _LoginPageFormState extends State<LoginPageForm> {
 
         if (response.containsKey('access_token')) {
           final accessToken = response["access_token"];
-         
 
           // Сохраняем токен и тип токена в SharedPreferences
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('auth_token', accessToken);
-        
+
           // Выводим токен на консоль
           print('Access Token: $accessToken');
-          Navigator.pushNamed(context, AppRoutes.entryPoint);
+          Navigator.pushNamedAndRemoveUntil(
+              context, AppRoutes.entryPoint, (route) => false);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Login failed: ${response['Error']}')),

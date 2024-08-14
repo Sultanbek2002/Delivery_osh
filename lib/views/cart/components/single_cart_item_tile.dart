@@ -51,7 +51,7 @@ class SingleCartItemTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          item['name'],
+                          item['ru_name'],
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -81,10 +81,11 @@ class SingleCartItemTile extends StatelessWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           '$quantity',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
                         ),
                       ),
                       IconButton(

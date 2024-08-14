@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:grocery/core/components/app_back_button.dart';
-import 'package:grocery/core/routes/app_routes.dart';
+import 'package:green_life/core/components/app_back_button.dart';
+import 'package:green_life/core/routes/app_routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class CouponAndOffersPage extends StatefulWidget {
   const CouponAndOffersPage({Key? key}) : super(key: key);

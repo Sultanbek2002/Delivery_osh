@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:grocery/core/constants/app_icons.dart';
+import 'package:green_life/core/constants/app_icons.dart';
 
 import '../../core/constants/app_defaults.dart';
 import '../../core/routes/app_routes.dart';
@@ -32,11 +32,8 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               floating: true,
-              title:Image.asset(
-                "assets/images/app_logo_splash.png",
-                height:100,
-                width: 200
-              ),
+              title: Image.asset("assets/images/app_logo_splash.png",
+                  height: 100, width: 200),
               actions: [
                 Padding(
                   padding: const EdgeInsets.only(right: 8, top: 4, bottom: 4),

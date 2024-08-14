@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grocery/core/constants/app_defaults.dart';
+import 'package:green_life/core/constants/app_defaults.dart';
 
 import '../../../core/constants/app_colors.dart';
 
@@ -41,7 +41,8 @@ class CategoriesChip extends StatelessWidget {
     return OutlinedButton(
       onPressed: () {},
       style: OutlinedButton.styleFrom(
-        foregroundColor: isActive ? Colors.white : AppColors.placeholder, padding:
+        foregroundColor: isActive ? Colors.white : AppColors.placeholder,
+        padding:
             const EdgeInsets.symmetric(horizontal: AppDefaults.padding * 1.5),
         minimumSize: const Size(40, 48),
         backgroundColor: isActive ? AppColors.primary : Colors.white,
