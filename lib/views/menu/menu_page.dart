@@ -89,7 +89,7 @@ class _CategoriesGridState extends State<CategoriesGrid> {
       // Log the error
       print('HTTP request error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load categories: $e')),
+        SnackBar(content: Text('Нет подключения к интернету!!')),
       );
     }
   }

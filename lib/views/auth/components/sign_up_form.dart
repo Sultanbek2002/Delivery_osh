@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grocery/views/auth/number_verification_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -28,7 +29,13 @@ class _SignUpFormState extends State<SignUpForm> {
         _isLoading = true;
         _errorMessage = null;
       });
+      final prefs = await SharedPreferences.getInstance();
 
+      // Очищаем сохраненные данные при успешной авторизации
+      await prefs.remove('saved_email');
+      await prefs.remove('saved_password');
+      await prefs.remove('last_route');
+      print('clear data');
       final data = {
         'username': _usernameController.text,
         'firstname': _firstnameController.text,
@@ -48,8 +55,6 @@ class _SignUpFormState extends State<SignUpForm> {
           url,
           headers: {
             'Content-Type': 'application/json',
-            "X-CSRF-TOKEN":token
-
           },
           body: json.encode(data),
         );
@@ -65,16 +70,18 @@ class _SignUpFormState extends State<SignUpForm> {
               ),
             ),
           );
+        } else if (response.statusCode == 400) {
+          _errorMessage = "Почта или телефон существует";
         } else if (response.statusCode == 302) {
           print('Redirect to: ${response.headers['location']}');
         } else {
           setState(() {
-            _errorMessage = 'Ошибка регистрации: ${response.statusCode} - ${response.reasonPhrase}';
+            _errorMessage = 'Ошибка регистрации';
           });
         }
       } catch (e) {
         setState(() {
-          _errorMessage = 'Ошибка при отправке данных ${e}';
+          _errorMessage = 'Ошибка при отправке данных';
         });
       } finally {
         setState(() {
@@ -113,7 +120,14 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _usernameController,
-                  validator: (value) => value!.isEmpty ? 'Username is required' : null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Поле не может быть пустым';
+                    } else if (value.length < 5) {
+                      return 'Должен содержать более 5 символов';
+                    }
+                    return null; // Если все условия соблюдены, вернуть null, что означает отсутствие ошибок
+                  },
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
@@ -121,7 +135,8 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _firstnameController,
-                  validator: (value) => value!.isEmpty ? 'First Name is required' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Поле не может быть пустым' : null,
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
@@ -129,7 +144,8 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _lastnameController,
-                  validator: (value) => value!.isEmpty ? 'Last Name is required' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Поле не может быть пустым' : null,
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
@@ -137,7 +153,19 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _emailController,
-                  validator: (value) => value!.isEmpty ? 'Email is required' : null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Поле не может быть пустым';
+                    } else if (!RegExp(
+                            r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+                        .hasMatch(value)) {
+                      return 'Непрвильная почта ';
+                    } else if (!(value.endsWith('@gmail.com') ||
+                        value.endsWith('@gmail.ru'))) {
+                      return 'Почта должен заканчиваться @gmail.com, @gmail.ru';
+                    }
+                    return null;
+                  },
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                 ),
@@ -146,7 +174,13 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _phoneController,
-                  validator: (value) => value!.isEmpty ? 'Phone is required' : null,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Поле не может быть пустым';
+                    } else if (value.length < 9) {
+                      return 'Телефон должен быть не менее 9 цифр';
+                    }
+                  },
                   keyboardType: TextInputType.phone,
                   textInputAction: TextInputAction.next,
                 ),
@@ -155,7 +189,8 @@ class _SignUpFormState extends State<SignUpForm> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _passwordController,
-                  validator: (value) => value!.isEmpty ? 'Password is required' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Поле не может быть пустым' : null,
                   obscureText: true,
                   textInputAction: TextInputAction.done,
                 ),

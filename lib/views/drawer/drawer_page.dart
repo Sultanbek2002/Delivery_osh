@@ -14,6 +14,8 @@ class DrawerPage extends StatelessWidget {
   Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
+    await prefs.remove('cart');
+    await prefs.remove('favorites');
     
     print("Успешный выход аккаунта");
     // Show success message

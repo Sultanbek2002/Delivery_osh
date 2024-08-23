@@ -58,7 +58,7 @@ class SingleCartItemTile extends StatelessWidget {
                               ?.copyWith(color: Colors.black),
                         ),
                         Text(
-                          '$quantity шт.',
+                          '$quantity кг.',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -113,7 +113,7 @@ class SingleCartItemTile extends StatelessWidget {
                     icon: SvgPicture.asset(AppIcons.delete),
                   ),
                   const SizedBox(height: 16),
-                  Text('\$${item['price']}'),
+                  Text('${item['price']} сом'),
                 ],
               )
             ],

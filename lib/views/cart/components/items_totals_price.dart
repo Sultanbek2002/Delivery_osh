@@ -37,7 +37,7 @@ class ItemTotalsAndPrice extends StatelessWidget {
           ),
           ItemRow(
             title: 'Общая сумма',
-            value: '\$${totalPrice.toStringAsFixed(2)}',
+            value: '${totalPrice.toStringAsFixed(2)} сом',
           ),
         ],
       ),

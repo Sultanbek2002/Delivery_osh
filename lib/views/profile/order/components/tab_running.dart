@@ -51,9 +51,7 @@ class _RunningTabState extends State<RunningTab> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Ошибка: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        }  else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text('Нет отмененных заказов'));
         } else {
           // Фильтрация отменённых заказов

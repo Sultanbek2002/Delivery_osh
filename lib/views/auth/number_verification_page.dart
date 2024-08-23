@@ -7,7 +7,6 @@ import 'package:grocery/core/constants/app_colors.dart';
 import 'package:grocery/core/constants/app_defaults.dart';
 import 'package:grocery/core/constants/app_images.dart';
 import 'package:grocery/core/routes/app_routes.dart';
-import 'package:grocery/core/themes/app_themes.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '.././api_routes/apis.dart';
@@ -29,7 +28,8 @@ class NumberVerificationPage extends StatefulWidget {
 class _NumberVerificationPageState extends State<NumberVerificationPage> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
-  final List<TextEditingController> _otpControllers = List.generate(4, (_) => TextEditingController());
+  final List<TextEditingController> _otpControllers =
+      List.generate(4, (_) => TextEditingController());
   String? _errorMessage;
   String? _verificationCode;
   bool _isLoading = false;
@@ -41,12 +41,47 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
     super.initState();
     _emailController = TextEditingController(text: widget.email);
     _passwordController = TextEditingController(text: widget.password);
+
+    // Автоматически отправляем код при загрузке страницы
+    _requestVerificationCode();
+    // Восстанавливаем данные, если они сохранены
+    _restoreData();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  Future<void> _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('last_route', AppRoutes.numberVerification);
+    await prefs.setString('saved_email', _emailController.text);
+    await prefs.setString('saved_password', _passwordController.text);
+  }
+
+  Future<void> _removeData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Очищаем сохраненные данные при успешной авторизации
+    await prefs.remove('saved_email');
+    await prefs.remove('saved_password');
+    await prefs.remove('last_route');
+    print('clear data');
+  }
+
+  Future<void> _restoreData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('saved_email');
+    final savedPassword = prefs.getString('saved_password');
+
+    if (savedEmail != null && savedPassword != null) {
+      setState(() {
+        _emailController.text = savedEmail;
+        _passwordController.text = savedPassword;
+      });
+    }
   }
 
   void _startTimer() {
@@ -70,7 +105,6 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
       });
       return;
     }
-
     if (_isCodeExpired) {
       setState(() {
         _errorMessage = 'Код истек. Пожалуйста, запросите новый код.';
@@ -101,32 +135,38 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        print('Response JSON: $jsonResponse');
         final token = jsonResponse['access_token'];
         if (token != null) {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('auth_token', token);
           print("Успешно авторизован");
+          // Очищаем сохраненные данные при успешной авторизации
+          await _removeData();
           Navigator.pushNamed(context, AppRoutes.entryPoint);
         } else {
           setState(() {
             _errorMessage = 'Ошибка: Токен отсутствует в ответе сервера.';
           });
         }
+      } else if (response.statusCode == 400) {
+        setState(() {
+          _errorMessage = 'Ошибка: Неправильный код.';
+        });
       } else {
         setState(() {
-          _errorMessage = 'Ошибка верификации: ${response.statusCode} - ${response.reasonPhrase}';
+          _errorMessage =
+              'Ошибка проверки: ${response.statusCode} - ${response.reasonPhrase}';
         });
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
-        _errorMessage = 'Ошибка при отправке данных 3: $e';
+        _errorMessage = 'Ошибка при отправке данных: $e';
       });
     }
   }
 
-  void _requestVerificationCode() async {
+  Future<void> _requestVerificationCode() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -139,8 +179,7 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
       'email': email,
       'password': password,
     };
-    print(data['email']);
-    print(data['password']);
+
     try {
       final response = await http.post(
         Uri.parse('${ApiConsts.urlbase}/api/restart'),
@@ -150,31 +189,35 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        print('Response JSON: $jsonResponse');
-        final verificationCode = jsonResponse['code'];
-        if (verificationCode != null) {
+        print(jsonResponse);
+        final verificationCode = jsonResponse['message'];
+        // Сохраняем данные после успешной отправки кода
+        await _saveData();
+        print(verificationCode);
+        if (verificationCode == "Verification code sent") {
           setState(() {
             _verificationCode = verificationCode;
           });
           _startTimer();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    'Код отправлен. Проверьте свою почту. Код истечет через три минуты.')),
+          );
         } else {
           setState(() {
-            _errorMessage = 'Ошибка: Код верификации отсутствует в ответе.';
+            _errorMessage =
+                'Ошибка: Код проверки отсутствует в ответе.Попробуйте обратно отправить';
           });
         }
       } else {
-        print("1");
         setState(() {
-
-          _errorMessage = 'Ошибка при отправке данных1: ${response.statusCode} - ${response.reasonPhrase}';
-          
+          _errorMessage = 'Ошибка при отправке данных';
         });
       }
     } catch (e) {
-      print("2");
       setState(() {
-        _errorMessage = 'Ошибка при отправке данных2: $e';
-        
+        _errorMessage = 'Ошибка при отправке данных';
       });
     } finally {
       setState(() {
@@ -207,8 +250,7 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
                         onCodeEntered: _verifyCode,
                       ),
                       SizedBox(height: AppDefaults.padding * 3),
-                      if (_isLoading)
-                        CircularProgressIndicator(),
+                      if (_isLoading) CircularProgressIndicator(),
                       ResendButton(onPressed: _requestVerificationCode),
                       SizedBox(height: AppDefaults.padding),
                       if (_errorMessage != null)
@@ -219,21 +261,20 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
                             style: const TextStyle(color: Colors.red),
                           ),
                         ),
-                      VerifyButton(
-                        emailController: _emailController,
-                        passwordController: _passwordController,
-                        onVerificationCodeReceived: (code) {
-                          setState(() {
-                            _verificationCode = code;
-                          });
-                        },
-                      ),
                       SizedBox(height: AppDefaults.padding),
                       ElevatedButton(
                         onPressed: _verifyCode,
                         child: const Text('Подтвердить код'),
                       ),
                       SizedBox(height: AppDefaults.padding),
+                      TextButton(
+                          onPressed: () {
+                            _removeData();
+                            Navigator.pushNamed(context,AppRoutes.introLogin);
+                          },
+                          // onPressed: () => Navigator.pushNamed(
+                          //     context, AppRoutes.introLogin),
+                          child: const Text('На главную'))
                     ],
                   ),
                 ),
@@ -246,73 +287,8 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
   }
 }
 
-class VerifyButton extends StatelessWidget {
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
-  final ValueChanged<String>? onVerificationCodeReceived;
-
-  const VerifyButton({
-    Key? key,
-    required this.emailController,
-    required this.passwordController,
-    this.onVerificationCodeReceived,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () async {
-          final email = emailController.text;
-          final password = passwordController.text;
-
-          if (email.isEmpty || password.isEmpty) {
-            print('Ошибка: Почта и пароль не могут быть пустыми.');
-            return;
-          }
-
-          final data = {
-            'email': email,
-            'password': password,
-          };
-          print('postemail $email');
-          print('postpass $password');
-          try {
-            final response = await http.post(
-              Uri.parse('${ApiConsts.urlbase}/api/restart'),
-              headers: {'Content-Type': 'application/json'},
-              body: json.encode(data),
-            );
-
-            if (response.statusCode == 200) {
-              final jsonResponse = jsonDecode(response.body);
-              print('Response JSON: $jsonResponse');
-              if (jsonResponse['code'] != null) {
-                final verificationCode = jsonResponse['code'];
-                if (onVerificationCodeReceived != null) {
-                  onVerificationCodeReceived!(verificationCode);
-                }
-              } else {
-                print('Ошибка: Код верификации отсутствует в ответе.');
-              }
-            } else {
-              print('Ошибка при отправке данных: ${response.statusCode} - ${response.reasonPhrase}');
-            }
-          } catch (e) {
-            print('Ошибка при отправке данных: $e');
-          }
-        },
-        child: const Text('Запросить код'),
-      ),
-    );
-  }
-}
-
 class NumberVerificationHeader extends StatelessWidget {
-  const NumberVerificationHeader({
-    Key? key,
-  }) : super(key: key);
+  const NumberVerificationHeader({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -328,9 +304,7 @@ class NumberVerificationHeader extends StatelessWidget {
           width: MediaQuery.of(context).size.width * 0.4,
           child: const AspectRatio(
             aspectRatio: 1 / 1,
-            child: NetworkImageWithLoader(
-              AppImages.numberVerfication,
-            ),
+            child: NetworkImageWithLoader(AppImages.numberVerfication),
           ),
         ),
         const SizedBox(height: AppDefaults.padding * 3),
@@ -352,8 +326,15 @@ class OTPTextFields extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: AppTheme.defaultTheme.copyWith(
-        inputDecorationTheme: AppTheme.otpInputDecorationTheme,
+      data: Theme.of(context).copyWith(
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.grey[200],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide.none,
+          ),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -369,8 +350,8 @@ class OTPTextFields extends StatelessWidget {
                 } else if (v.isEmpty && index > 0) {
                   FocusScope.of(context).previousFocus();
                 }
-
-                if (controllers.every((controller) => controller.text.length == 1)) {
+                if (controllers
+                    .every((controller) => controller.text.length == 1)) {
                   onCodeEntered();
                 }
               },
@@ -383,6 +364,10 @@ class OTPTextFields extends StatelessWidget {
                 FilteringTextInputFormatter.digitsOnly,
               ],
               keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.grey[300],
+              ),
             ),
           );
         }),
@@ -401,15 +386,14 @@ class ResendButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text('Не получили код?'),
-        TextButton(
-          onPressed: onPressed,
-          child: const Text('Отправить снова'),
+    return TextButton(
+      onPressed: onPressed,
+      child: Text(
+        'Отправить код повторно',
+        style: TextStyle(
+          color: Theme.of(context).primaryColor,
         ),
-      ],
+      ),
     );
   }
 }

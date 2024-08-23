@@ -12,7 +12,6 @@ class UnknownPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const AppBackButton(),
         title: const Text('Unknown Page'),
       ),
       body: Column(
@@ -36,7 +35,7 @@ class UnknownPage extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  'oppss!! something wrong',
+                  'Что-то пошло не так',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -44,14 +43,7 @@ class UnknownPage extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                const Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: AppDefaults.padding),
-                  child: Text(
-                    'Sorry, something went wrong\nplease try again .',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                
               ],
             ),
           ),
@@ -64,7 +56,7 @@ class UnknownPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushNamed(context, AppRoutes.entryPoint);
                 },
-                child: const Text('Try Again'),
+                child: const Text('На главную'),
               ),
             ),
           ),

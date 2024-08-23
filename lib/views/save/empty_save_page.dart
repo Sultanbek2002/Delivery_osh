@@ -49,11 +49,16 @@ class _EmptySavePageState extends State<EmptySavePage> {
           return dateB.compareTo(dateA);
         });
         return orders;
-      } else {
-        throw Exception('Failed to load orders');
       }
-    } else {
-      throw Exception('Failed to load orders');
+       else {
+        print(response.statusCode);
+        throw Exception(response.statusCode);
+      }
+    } 
+    else {
+      print(response.statusCode);
+      throw Exception('Нет списков заказа');
+      
     }
   }
 
@@ -174,8 +179,6 @@ class _EmptySavePageState extends State<EmptySavePage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Ошибка: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return _buildEmptyWishlist(context);
             } else {

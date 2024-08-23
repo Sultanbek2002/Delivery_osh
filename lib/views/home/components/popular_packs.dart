@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../../../core/components/bundle_tile_square.dart';
-import '../../../core/components/title_and_action_button.dart';
 import '../../../core/constants/constants.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../api_routes/apis.dart';
@@ -17,45 +17,58 @@ class PopularPacks extends StatefulWidget {
 }
 
 class _PopularPacksState extends State<PopularPacks> {
-  late Future<List<dynamic>> _futureProducts;
+  List<dynamic> _cachedProducts = [];
+  late Future<void> _futureUpdate;
 
   @override
   void initState() {
     super.initState();
-    _futureProducts = fetchProducts();
+    _loadCachedProducts();  // Load cached products immediately
+    _futureUpdate = _fetchAndUpdateProducts();  // Fetch updates in the background
   }
 
-  Future<List<dynamic>> fetchProducts() async {
+  Future<void> _loadCachedProducts() async {
     final prefs = await SharedPreferences.getInstance();
-    final String? accessToken = prefs.getString('auth_token');
+    final String? productsData = prefs.getString('products_data');
 
-    final response = await http.get(
-      Uri.parse('${ApiConsts.urlbase}/api/all-Product'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-
-      // Save data to SharedPreferences
-      await prefs.setString('products_data', json.encode(data['product']));
-
-      return data['product'];
-    } else {
-      throw Exception('Failed to load products: ${response.body}');
+    if (productsData != null) {
+      setState(() {
+        _cachedProducts = json.decode(productsData);
+      });
     }
   }
 
-  Future<List<dynamic>> _loadProductsFromPrefs() async {
+  Future<void> _fetchAndUpdateProducts() async {
     final prefs = await SharedPreferences.getInstance();
-    final String? productsData = prefs.getString('products_data');
-    if (productsData != null) {
-      return json.decode(productsData);
-    } else {
-      return [];
+    final String? accessToken = prefs.getString('auth_token');
+
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConsts.urlbase}/api/all-Product'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Update SharedPreferences
+        await prefs.setString('products_data', json.encode(data['product']));
+
+        // Optionally, update the UI with the new data
+        setState(() {
+          _cachedProducts = data['product'];
+        });
+      } else if (response.statusCode == 401) {
+        await prefs.remove('auth_token');
+        Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+      } else {
+        throw Exception('Ошибка загрузки продуктов: ${response.body}');
+      }
+    } catch (error) {
+      print('Ошибка при обновлении данных: $error');
     }
   }
 
@@ -64,34 +77,36 @@ class _PopularPacksState extends State<PopularPacks> {
     return Column(
       children: [
         Text(
-           'Популярные продукты' ,
-           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          'Популярные продукты',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        FutureBuilder<List<dynamic>>(
-          future: _futureProducts,
+        if (_cachedProducts.isEmpty)
+          const Center(child: Text('Популярные товары не найдены'))
+        else
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(AppDefaults.padding),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 0.8, // Adjusted ratio to fit content better
+            ),
+            itemCount: _cachedProducts.length,
+            itemBuilder: (context, index) {
+              return BundleTileSquare(data: _cachedProducts[index]);
+            },
+          ),
+        FutureBuilder<void>(
+          future: _futureUpdate,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const SizedBox.shrink(); // Background update, so no need to show a loader
             } else if (snapshot.hasError) {
               return Center(child: Text('Ошибка: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('Популярные товары не найдены'));
             } else {
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(AppDefaults.padding),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Display 2 items per row
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.8, // Adjusted ratio to fit content better
-                ),
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  return BundleTileSquare(data: snapshot.data![index]);
-                },
-              );
+              return const SizedBox.shrink(); // Update completed without error
             }
           },
         ),
@@ -100,10 +115,13 @@ class _PopularPacksState extends State<PopularPacks> {
   }
 }
 
+
+
 class BundleTileSquare extends StatelessWidget {
-  const BundleTileSquare({Key? key, required this.data}) : super(key: key);
+  const BundleTileSquare({Key? key, required this.data, this.isOffline = false}) : super(key: key);
 
   final dynamic data;
+  final bool isOffline;
 
   @override
   Widget build(BuildContext context) {
@@ -130,10 +148,23 @@ class BundleTileSquare extends StatelessWidget {
               Expanded(
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: Image.network(
-                    'https://dostavka.arendabook.com/images/${data['image']}',
-                    fit: BoxFit.cover,
-                  ),
+                  child: isOffline
+                      ? Icon(
+                          Icons.image_not_supported, // Замените на нужную иконку из AppIcons
+                          size: 60,
+                          color: Colors.grey,
+                        )
+                      : Image.network(
+                          'https://dostavka.arendabook.com/images/${data['image']}',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              Icons.image_not_supported, // Замените на нужную иконку из AppIcons
+                              size: 60,
+                              color: Colors.grey,
+                            );
+                          },
+                        ),
                 ),
               ),
               Padding(

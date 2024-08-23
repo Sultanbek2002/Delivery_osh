@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:grocery/views/home/home_page.dart';
 
 import '../../views/auth/forget_password_page.dart';
 import '../../views/auth/intro_login_page.dart';
@@ -225,5 +226,5 @@ class RouteGenerator {
   }
 
   static Route? errorRoute() =>
-      CupertinoPageRoute(builder: (_) => const UnknownPage());
+      CupertinoPageRoute(builder: (_) => const EntryPointUI());
 }

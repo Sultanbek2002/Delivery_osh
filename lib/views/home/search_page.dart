@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../../core/constants/app_defaults.dart';
 import '../../core/constants/app_icons.dart';
@@ -18,11 +19,20 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   List<dynamic> allProducts = [];
   List<dynamic> filteredProducts = [];
+  bool isOffline = false;
 
   @override
   void initState() {
     super.initState();
+    _checkConnectivity();
     _loadProducts();
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      isOffline = connectivityResult != ConnectivityResult.none;
+    });
   }
 
   Future<void> _loadProducts() async {
@@ -64,12 +74,25 @@ class _SearchPageState extends State<SearchPage> {
                   return ListTile(
                     title: Text(product['ru_name']),
                     subtitle: Text('${product['price']} руб'),
-                    leading: Image.network(
-                      'https://dostavka.arendabook.com/images/${product['image']}', // Замените на ваш URL
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
-                    ),
+                    leading: isOffline
+                        ? Icon(
+                            Icons.image_not_supported, // Замените на нужную иконку из AppIcons
+                          size: 60,
+                          color: Colors.grey,
+                          )
+                        : Image.network(
+                            'https://dostavka.arendabook.com/images/${product['image']}',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                            Icons.image_not_supported, // Замените на нужную иконку из AppIcons
+                          size: 60,
+                          color: Colors.grey,
+                          );
+                            },
+                          ),
                     onTap: () {
                       Navigator.pushNamed(
                         context,

@@ -92,13 +92,13 @@ class _ShowDetailsState extends State<ShowDetails> {
                       width: 50,
                       height: 50,
                     ),
-                    title: Text(productInfo['name']),
+                    title: Text(productInfo['ru_name']),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Цена: ${productInfo['price']} сом'),
                         Text('Количество: ${detail['quantity']}'),
-                        Text('Описание: ${productInfo['description']}'),
+                        Text('Описание: ${productInfo['ru_description']}'),
                       ],
                     ),
                   ),

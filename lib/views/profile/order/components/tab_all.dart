@@ -61,9 +61,7 @@ class _ReceivedOrdersPageState extends State<ReceivedOrdersPage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Ошибка: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            }  else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return _buildEmptyOrders(context);
             } else {
               return _buildOrderList(context, snapshot.data!);

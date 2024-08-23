@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:grocery/core/constants/app_defaults.dart';
+import 'package:grocery/core/constants/app_icons.dart';
+import 'package:grocery/core/routes/app_routes.dart';
+import 'package:grocery/main.dart';
+import 'package:grocery/views/profile/components/profile_list_tile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../drawer/drawer_page.dart';
-import '../../../core/constants/constants.dart';
-import '../../../core/routes/app_routes.dart';
-import 'profile_list_tile.dart';
+import '../../../core/languages/localization.dart'; // Импортируйте класс локализации
 
 class ProfileMenuOptions extends StatelessWidget {
-  const ProfileMenuOptions({
-    Key? key,
-  }) : super(key: key);
+  const ProfileMenuOptions({Key? key}) : super(key: key);
+
   Future<void> _logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
-    
-    print("Успешный выход аккаунта");
-    // Show success message
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Вы успешно вышли из аккаунта.'),
+        content: Text(AppLocalizations.of(context)?.translate('logout_success') ?? 'Logout successful'),
         duration: Duration(seconds: 3),
       ),
     );
 
-    // Navigate to the login screen after a short delay to allow the message to be shown
     await Future.delayed(Duration(seconds: 1));
 
     Navigator.pushNamedAndRemoveUntil(
@@ -30,6 +28,32 @@ class ProfileMenuOptions extends StatelessWidget {
       AppRoutes.introLogin,
       (Route<dynamic> route) => false,
     );
+  }
+
+  Future<void> _clearData(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final authToken = prefs.getString('auth_token'); // Сохраняем auth_token
+
+    await prefs.clear(); // Очищаем все данные
+
+    if (authToken != null) {
+      await prefs.setString('auth_token', authToken); // Восстанавливаем auth_token
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(AppLocalizations.of(context)?.translate('data_cleared') ?? 'Data cleared'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _changeLanguage(BuildContext context, Locale locale) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('language_code', locale.languageCode);
+
+    // Обновите состояние приложения для применения нового языка
+    MyApp.of(context)?.setLocale(locale);
   }
 
   @override
@@ -47,8 +71,27 @@ class ProfileMenuOptions extends StatelessWidget {
           ProfileListTile(
             title: 'Выйти',
             icon: AppIcons.profileLogout,
-            onTap: ()=>_logout(context),
+            onTap: () => _logout(context),
           ),
+          ProfileListTile(
+            title:'Очистка кеша',
+            icon: AppIcons.delete,
+            onTap: () => _clearData(context),
+          ),
+          // ListTile(
+          //   title: Text(AppLocalizations.of(context)?.translate('language') ?? 'Language'),
+          //   trailing: DropdownButton<String>(
+          //     items: [
+          //       DropdownMenuItem(child: Text('Русский'), value: 'kg'),
+          //       DropdownMenuItem(child: Text('Кыргызча'), value: ''),
+          //     ],
+          //     onChanged: (value) {
+          //       if (value != null) {
+          //         _changeLanguage(context, Locale(value));
+          //       }
+          //     },
+          //   ),
+          // ),
         ],
       ),
     );

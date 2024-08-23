@@ -45,6 +45,8 @@ dependencies:
   uuid: ^3.0.6
   provider: ^6.0.2
   connectivity_plus: ^4.0.0
+  flutter_localizations:
+    sdk: flutter
   
 
 dev_dependencies:
@@ -88,6 +90,8 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/languages/ru.json
+    - assets/languages/kg.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

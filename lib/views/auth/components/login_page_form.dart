@@ -87,7 +87,10 @@ class _LoginPageFormState extends State<LoginPageForm> {
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
-      } else {
+      }else if(response.statusCode==401){
+        return {'Error': 'Пройдите регистрацию.'};
+      }
+       else {
         throw Exception('Failed to login, status code: ${response.statusCode}');
       }
     } catch (e) {
