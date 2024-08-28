@@ -35,11 +35,14 @@ class BuyNowRow extends StatelessWidget {
           const SizedBox(width: AppDefaults.padding),
           Expanded(
             child: ElevatedButton(
-              onPressed:(){Navigator.pushNamed(context, AppRoutes.cartPage);},
+              onPressed: () {
+                onCartButtonTap(); // Добавляем продукт в корзину
+                Navigator.pushNamed(context, AppRoutes.cartPage); // Переходим в корзину
+              },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(AppDefaults.padding * 1.2),
               ),
-              child:  Text(S.of(context).order_btn),
+              child: Text(S.of(context).order_btn),
             ),
           ),
         ],

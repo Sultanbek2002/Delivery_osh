@@ -57,8 +57,7 @@ class SingleCartItemTile extends StatelessWidget {
                   final languageCode = snapshot.data!;
 
                   print(languageCode);
-                  final itemNameKey =
-                      languageCode == 'ru' ? 'ru_name' : 'name';
+                  final itemNameKey = languageCode == 'ru' ? 'ru_name' : 'name';
                   print(itemNameKey);
 
                   return Column(

@@ -71,7 +71,6 @@ class _EmptySavePageState extends State<EmptySavePage> {
   }
 }
 
-
   String _getOrderStatus(Map<String, dynamic> order) {
     if (order['status_get'] == 1) {
       return S.of(context).status_get;
