@@ -17,13 +17,13 @@ pluginManagement {
     }
 
     plugins {
-        id "dev.flutter.flutter-gradle-plugin" version "1.0.0" apply false
+        id "dev.flutter.flutter-gradle-plugin" version "1.1.0" apply false // Обновите версию, если нужно
     }
 }
 
 plugins {
-    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
-    id "com.android.application" version "7.3.0" apply false
+    id "dev.flutter.flutter-plugin-loader" version "1.1.0" // Обновите версию, если нужно
+    id "com.android.application" version "7.4.0" apply false // Обновите версию, если нужно
 }
 
 include ":app"

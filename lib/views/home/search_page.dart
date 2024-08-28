@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:grocery/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -130,7 +131,7 @@ class _SearchPageHeader extends StatelessWidget {
           Expanded(
             child: TextField(
               decoration: InputDecoration(
-                hintText: 'Поиск',
+                hintText: S.of(context).search,
                 prefixIcon: Padding(
                   padding: const EdgeInsets.all(AppDefaults.padding),
                   child: SvgPicture.asset(AppIcons.search),

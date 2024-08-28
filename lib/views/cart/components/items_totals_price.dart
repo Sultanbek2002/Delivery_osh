@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grocery/generated/l10n.dart';
 import '../../../core/components/dotted_divider.dart';
 import '../../../core/constants/constants.dart';
 import 'item_row.dart';
@@ -32,11 +33,11 @@ class ItemTotalsAndPrice extends StatelessWidget {
       child: Column(
         children: [
           ItemRow(
-            title: 'Общая количества',
+            title: S.of(context).allCount,
             value: '$totalItems',
           ),
           ItemRow(
-            title: 'Общая сумма',
+            title: S.of(context).allsumma,
             value: '${totalPrice.toStringAsFixed(2)} сом',
           ),
         ],

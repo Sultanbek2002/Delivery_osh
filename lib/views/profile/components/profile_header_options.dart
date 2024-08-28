@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grocery/generated/l10n.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/routes/app_routes.dart';
@@ -23,14 +24,14 @@ class ProfileHeaderOptions extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           ProfileSqureTile(
-            label: 'История',
+            label: S.of(context).history,
             icon: AppIcons.truckIcon,
             onTap: () {
               Navigator.pushNamed(context, AppRoutes.myOrder);
             },
           ),
           ProfileSqureTile(
-            label: 'Нравится',
+            label: S.of(context).liked,
             icon: AppIcons.heart,
             onTap: () {
               Navigator.pushNamed(context, AppRoutes.coupon);

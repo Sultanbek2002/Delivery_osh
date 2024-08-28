@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:grocery/generated/l10n.dart';
 import 'package:grocery/views/api_routes/apis.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,7 +33,7 @@ class _CategoryProductPageState extends State<CategoryProductPage> {
 
     if (accessToken == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Ошибка: отсутствует токен доступа')),
+        SnackBar(content: Text(S.of(context).empty_token)),
       );
       return;
     }
@@ -60,7 +61,7 @@ class _CategoryProductPageState extends State<CategoryProductPage> {
           isLoading = false;
         });
       } else {
-        throw Exception('Не удалось загрузить продукты');
+        throw Exception(S.of(context).fail_load);
       }
     } catch (e) {
       print('Ошибка HTTP-запроса: $e');
@@ -75,7 +76,7 @@ class _CategoryProductPageState extends State<CategoryProductPage> {
     if (isLoading) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Продукты'),
+          title: Text(S.of(context).products),
           leading: const BackButton(),
         ),
         body: Center(child: CircularProgressIndicator()),
@@ -84,7 +85,7 @@ class _CategoryProductPageState extends State<CategoryProductPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Продукты'),
+        title:  Text(S.of(context).products),
         leading: const BackButton(),
       ),
       body: GridView.builder(

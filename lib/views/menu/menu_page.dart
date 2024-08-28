@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:grocery/generated/l10n.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../api_routes/apis.dart';
@@ -17,7 +18,7 @@ class MenuPage extends StatelessWidget {
         children: [
           const SizedBox(height: 32),
           Text(
-            'Выберите категорию',
+            S.of(context).chose_cat,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -43,11 +44,20 @@ class CategoriesGrid extends StatefulWidget {
 class _CategoriesGridState extends State<CategoriesGrid> {
   List<dynamic> categories = [];
   bool isLoading = true;
+  String _languageCode = 'ru';
 
   @override
   void initState() {
     super.initState();
+    _loadLanguagePreference();
     fetchCategories();
+  }
+
+  Future<void> _loadLanguagePreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _languageCode = prefs.getString('language_code') ?? 'ru';
+    });
   }
 
   Future<void> fetchCategories() async {
@@ -55,7 +65,6 @@ class _CategoriesGridState extends State<CategoriesGrid> {
     final String? accessToken = prefs.getString('auth_token');
 
     if (accessToken == null) {
-      // Handle the case where the token is missing
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: Missing access token')),
       );
@@ -74,24 +83,25 @@ class _CategoriesGridState extends State<CategoriesGrid> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        // Print the entire response data
         print('Response data: $data');
 
-        // Iterate over each category and print it
         setState(() {
           categories = data['categories'];
           isLoading = false;
         });
       } else {
-        throw Exception('Failed to load categories');
+        throw Exception(S.of(context).fail_load);
       }
     } catch (e) {
-      // Log the error
       print('HTTP request error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Нет подключения к интернету!!')),
+        SnackBar(content: Text(S.of(context).fail_connect_internet)),
       );
     }
+  }
+
+  String _getLocalizedKey(String key) {
+    return _languageCode == 'ru' ? 'ru_$key' : key;
   }
 
   @override
@@ -109,14 +119,14 @@ class _CategoriesGridState extends State<CategoriesGrid> {
         itemBuilder: (context, index) {
           final category = categories[index];
           return CategoryTile(
-            imageLink: '${ApiConsts.urlbase}/images/${category['image']}', // Update with your server URL
-            label: category['ru_name'], // Use 'ru_name' or 'name' based on your preference
+            imageLink: '${ApiConsts.urlbase}/images/${category['image']}',
+            label: category[_getLocalizedKey('name')], // Use the localized key
             onTap: () {
-               Navigator.pushNamed(
-              context,
-              AppRoutes.categoryDetails,
-              arguments: category['id'], // Передача ID категории
-            );
+              Navigator.pushNamed(
+                context,
+                AppRoutes.categoryDetails,
+                arguments: category['id'],
+              );
             },
           );
         },

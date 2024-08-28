@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:grocery/generated/l10n.dart';
 import 'package:grocery/views/api_routes/apis.dart';
+import 'package:grocery/views/home/order_successfull_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/components/app_back_button.dart';
@@ -18,6 +20,7 @@ class CheckoutPage extends StatefulWidget {
 
 class _CheckoutPageState extends State<CheckoutPage> {
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _clearCart() async {
@@ -31,7 +34,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
 
     final prefs = await SharedPreferences.getInstance();
-    final userToken = prefs.getString('auth_token'); // Замените на ваш метод получения токена
+    final userToken =
+        prefs.getString('auth_token'); // Замените на ваш метод получения токена
 
     final headers = {
       'Content-Type': 'application/json',
@@ -39,10 +43,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
     };
     final body = json.encode({
       'map': _addressController.text, // Используем значение из текстового поля
-      'products': widget.cartItems.map((item) => {
-        'product_id': item['id'],
-        'quantity': item['quantity'],
-      }).toList(),
+      'number': _phoneController.text,
+      'products': widget.cartItems
+          .map((item) => {
+                'product_id': item['id'],
+                'quantity': item['quantity'],
+              })
+          .toList(),
     });
 
     showDialog(
@@ -54,18 +61,29 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
 
     try {
-      final response = await http.post(Uri.parse("${ApiConsts.urlbase}/api/Order"), headers: headers, body: body);
+      final response = await http.post(
+          Uri.parse("${ApiConsts.urlbase}/api/Order"),
+          headers: headers,
+          body: body);
       Navigator.pop(context);
 
       if (response.statusCode == 200) {
         await _clearCart();
-        Navigator.pushNamed(context, AppRoutes.orderSuccessfull);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  OrderSuccessfullPage()), // Ваша главная страница
+          (Route<dynamic> route) => false,
+        );
       } else {
-        _showErrorDialog(context, 'Ошибка при оформлении заказа');
+        print("statusCode: ${response.statusCode}-${response.reasonPhrase}");
+        _showErrorDialog(context, S.of(context).order_fail);
       }
     } catch (e) {
+      print("Error ${e}");
       Navigator.pop(context);
-      _showErrorDialog(context, 'Ошибка при подключении к серверу');
+      _showErrorDialog(context, S.of(context).fail_connect_internet);
     }
   }
 
@@ -92,15 +110,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   Widget build(BuildContext context) {
     // Рассчёт общего количества товаров
-    final double totalItems = widget.cartItems.fold<double>(0, (sum, item) => sum + (item['quantity'] ?? 1));
+    final double totalItems = widget.cartItems
+        .fold<double>(0, (sum, item) => sum + (item['quantity'] ?? 1));
 
     // Рассчёт общей суммы
-    final double totalPrice = widget.cartItems.fold<double>(0.0, (sum, item) => sum + ((item['quantity'] ?? 1) * (double.tryParse(item['price']) ?? 0.0)));
+    final double totalPrice = widget.cartItems.fold<double>(
+        0.0,
+        (sum, item) =>
+            sum +
+            ((item['quantity'] ?? 1) *
+                (double.tryParse(item['price']) ?? 0.0)));
 
     return Scaffold(
       appBar: AppBar(
         leading: const AppBackButton(),
-        title: const Text('Оформление заказа'),
+        title: Text(S.of(context).order_menu),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -113,32 +137,52 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 // Поле для ввода адреса
                 TextFormField(
                   controller: _addressController,
-                  decoration: const InputDecoration(
-                    labelText: 'Адрес доставки',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).order_adress,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Пожалуйста, введите адрес';
+                      return S.of(context).order_validate_address;
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: AppDefaults.padding),
+                TextFormField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    labelText: S.of(context).phone_to_order,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return S.of(context).order_validate_phone;
+                    }
+                    if (!value.startsWith('+996')) {
+                      return S.of(context).order_phone_validate;
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: AppDefaults.padding),
                 // Отображение списка товаров в корзине
-                ...widget.cartItems.map((item) => ListTile(
-                  title: Text(item['name']),
-                  subtitle: Text('${item['quantity']} шт.'),
-                  trailing: Text('${item['price']} сом'),
-                )).toList(),
+                ...widget.cartItems
+                    .map((item) => ListTile(
+                          title: Text(item['name']),
+                          subtitle: Text(
+                              '${item['quantity']} ${S.of(context).produc_count}'),
+                          trailing: Text('${item['price']} сом'),
+                        ))
+                    .toList(),
                 const Divider(),
                 // Отображение общего количества товаров
                 ListTile(
-                  title: const Text('Общее количество'),
-                  trailing: Text('$totalItems шт.'),
+                  title: Text(S.of(context).allCount),
+                  trailing: Text('$totalItems ${S.of(context).produc_count}'),
                 ),
                 // Отображение общей суммы
                 ListTile(
-                  title: const Text('Общая сумма'),
+                  title: Text(S.of(context).allsumma),
                   trailing: Text('$totalPrice сом'),
                 ),
                 const SizedBox(height: AppDefaults.padding),
@@ -169,7 +213,7 @@ class PayNowButton extends StatelessWidget {
         padding: const EdgeInsets.all(AppDefaults.padding),
         child: ElevatedButton(
           onPressed: onPressed,
-          child: const Text('На заказ'),
+          child: Text(S.of(context).order_to),
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grocery/core/routes/app_routes.dart';
+import 'package:grocery/generated/l10n.dart';
 
 import '../constants/constants.dart';
 
@@ -38,7 +39,7 @@ class BuyNowRow extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(AppDefaults.padding * 1.2),
               ),
-              child: const Text('Заказать'),
+              child:  Text(S.of(context).order_btn),
             ),
           ),
         ],

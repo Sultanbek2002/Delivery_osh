@@ -30,7 +30,7 @@ class BottomAppBarItem extends StatelessWidget {
           ),
           Text(
             name,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: isActive ? AppColors.primary : AppColors.placeholder,
                 ),
           ),

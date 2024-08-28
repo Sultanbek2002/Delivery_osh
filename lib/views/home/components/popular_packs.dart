@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:grocery/generated/l10n.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../../../core/components/bundle_tile_square.dart';
 import '../../../core/constants/constants.dart';
@@ -19,12 +19,21 @@ class PopularPacks extends StatefulWidget {
 class _PopularPacksState extends State<PopularPacks> {
   List<dynamic> _cachedProducts = [];
   late Future<void> _futureUpdate;
+  String _languageCode = 'ru';
 
   @override
   void initState() {
     super.initState();
+    _loadLanguagePreference(); // Load language preference
     _loadCachedProducts();  // Load cached products immediately
     _futureUpdate = _fetchAndUpdateProducts();  // Fetch updates in the background
+  }
+
+  Future<void> _loadLanguagePreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _languageCode = prefs.getString('language_code') ?? 'ru';
+    });
   }
 
   Future<void> _loadCachedProducts() async {
@@ -72,16 +81,20 @@ class _PopularPacksState extends State<PopularPacks> {
     }
   }
 
+  String _getLocalizedKey(String key) {
+    return _languageCode == 'ru' ? 'ru_$key' : key;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Text(
-          'Популярные продукты',
+          S.of(context).popular_product_menu,
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         if (_cachedProducts.isEmpty)
-          const Center(child: Text('Популярные товары не найдены'))
+           Center(child: Text(S.of(context).empty_data))
         else
           GridView.builder(
             shrinkWrap: true,
@@ -95,7 +108,10 @@ class _PopularPacksState extends State<PopularPacks> {
             ),
             itemCount: _cachedProducts.length,
             itemBuilder: (context, index) {
-              return BundleTileSquare(data: _cachedProducts[index]);
+              return BundleTileSquare(
+                data: _cachedProducts[index],
+                languageCode: _languageCode,
+              );
             },
           ),
         FutureBuilder<void>(
@@ -115,13 +131,16 @@ class _PopularPacksState extends State<PopularPacks> {
   }
 }
 
-
-
 class BundleTileSquare extends StatelessWidget {
-  const BundleTileSquare({Key? key, required this.data, this.isOffline = false}) : super(key: key);
+  const BundleTileSquare({Key? key, required this.data, required this.languageCode, this.isOffline = false}) : super(key: key);
 
   final dynamic data;
+  final String languageCode;
   final bool isOffline;
+
+  String _getLocalizedKey(String key) {
+    return languageCode == 'ru' ? 'ru_$key' : key;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +169,7 @@ class BundleTileSquare extends StatelessWidget {
                   aspectRatio: 1,
                   child: isOffline
                       ? Icon(
-                          Icons.image_not_supported, // Замените на нужную иконку из AppIcons
+                          Icons.image_not_supported, // Replace with the appropriate icon from AppIcons
                           size: 60,
                           color: Colors.grey,
                         )
@@ -159,7 +178,7 @@ class BundleTileSquare extends StatelessWidget {
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Icon(
-                              Icons.image_not_supported, // Замените на нужную иконку из AppIcons
+                              Icons.image_not_supported, // Replace with the appropriate icon from AppIcons
                               size: 60,
                               color: Colors.grey,
                             );
@@ -173,14 +192,14 @@ class BundleTileSquare extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      data['ru_name'],
+                      data[_getLocalizedKey('name')],
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      data['ru_description'],
+                      data[_getLocalizedKey('description')],
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),

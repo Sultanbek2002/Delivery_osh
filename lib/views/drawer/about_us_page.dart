@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grocery/generated/l10n.dart';
 
 import '../../core/components/app_back_button.dart';
 import '../../core/constants/app_defaults.dart';
@@ -11,7 +12,7 @@ class AboutUsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: const AppBackButton(),
-        title: const Text('О нас '),
+        title:  Text(S.of(context).about_us),
       ),
       body: Padding(
         padding: const EdgeInsets.all(AppDefaults.padding),
@@ -19,14 +20,14 @@ class AboutUsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'О нас ',
+              S.of(context).about_us,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
             const SizedBox(height: AppDefaults.padding),
-            const Text(
-                "Данные пока пусто"
+             Text(
+               S.of(context).empty_data 
             )
           ],
         ),

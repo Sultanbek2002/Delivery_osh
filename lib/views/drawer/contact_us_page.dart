@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:grocery/generated/l10n.dart';
 
 import '../../core/components/app_back_button.dart';
 import '../../core/components/network_image.dart';
@@ -13,7 +14,7 @@ class ContactUsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: const AppBackButton(),
-        title: const Text('Связь с разработчиками'),
+        title: Text(S.of(context).dv_connect),
       ),
       backgroundColor: AppColors.cardColor,
       body: Container(
@@ -32,7 +33,7 @@ class ContactUsPage extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Связь с разработчиками',
+                S.of(context).dv_connect,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,

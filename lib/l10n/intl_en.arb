@@ -1,0 +1,86 @@
+{   
+        "f_image":"Көптөгөн түрдөгү азыктар",
+        "hello":"Салам",
+        "world":"Дуйно",
+
+        
+        "dr_menu":"Меню",
+        "use_rule":"Колдонуу эрежеси",
+        "dv_connect":"Түзүүчүлөр менен байланышуу",
+        "logout":"Чыгуу",
+        "about_us":"Биз жөнүндө",
+        "empty_data":"Маалымат жок",
+        "search":"Издөө",
+
+        "popular_product_menu": "Белгилүү тандалмалар",
+
+        "home":"Башкы бет",
+        "order":"Буйрутма",
+        "profile":"Профиль",
+
+
+        "chose_cat":"Категориялар",
+        "fail_load":"Жүктөөдө каталык бар",
+        "fail_connect_internet":"Интернетке начар туташуу",
+        "products": "Товарлар",
+        "empty_token": "Токен жок",
+        "basket":"Кутуча",
+        "basket_empty":"Азырынча кутуча бош ",
+        "follow":"Жөнөтүү",
+
+        "allCount":"Жалпы буйрутма эсеби",
+        "allsumma":"Жалпы сумма",
+
+        "order_fail":"Буйрутмада каталык бар",
+        "order_success":"Буйрутма ийгилктүү аяктады",
+        "order_menu":"Буйрутма берүү",
+        "order_adress":"Адрести жазыныз",
+        "order_phone":"Учурдагы телефон",
+        "order_validate_address":"Адрести толтурунуз",
+        "order_validate_phone":"Телефонду жазыныз ",
+        "produc_count":"кг",
+        "order_to":"Буйрутма берүү",
+
+        "order_success_phrase":"Cиз буйрутмаларды көзөмөлдөй аласыз, буйрутма абалын биле аласыз.",
+        "orders": "Буйрутмалар тизмеси",
+
+        "empty_order": "Азырынча тизме бош",
+        "status_get":"Жеткирилди",
+        "status_set":"Жолдо",
+        "status_show":"Көрүлгөн",
+        "status_have": "Кабыл алынды",
+        "status_not_defind":"Белгисиз",
+        "stop_refuse":"Буйрутма кабыл алынган же жолдо болгону учун кайтарууга болбойт",
+        "refuse_success":"Буйрутма ийгилктүү кайтарылды",
+        "refuse_fail":"кайтарууда каталык бар",
+        "refuse_order":"Буйрутманы кайтаруу",
+        "refuse_reason":"Кайтаруунун себеби",
+        "btn_refuse"  :"Токтотуу",
+        "btn_refuse_to":"Жөнөтүү",
+        "order_sum":"Буйрутманын суммасы",
+        "order_date":"Убактысы",
+        "order_btn":"Буйрутма берүү",
+        "order_detail":"Буйрутма жөнүндө",
+        "order_price":"Баасы",
+        "order_detail_count":"Даана",
+        "description":"Маалымат",
+
+
+        "history":"Архивдер",
+        "liked":"Жаккан товарлар",
+
+        "logout_success":"Сиз аккаунттан ийгиликтүү чыктыныз",
+        "clear_data":"Кештер ийгиликтүү тазаланды",
+        "menu_clear_data":"Кештерди тазалоо",
+        "langauge":"Тили",
+
+        "phone_to_order":"Учурдагы телефон номер",
+        "order_phone_validate":"Телефон номер жазылышы керек(формат: +996xxxxxxxxx)",
+        "detail_of_order":"Кененирээк маалымат"
+
+
+
+
+
+
+}

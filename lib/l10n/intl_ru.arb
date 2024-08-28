@@ -1,0 +1,80 @@
+{
+        "f_image":"Много различных продуктов" ,
+        "hello":"Привет",
+        "world":"world",
+  
+        "dr_menu":"Меню",
+        "use_rule":"Правило использование",
+        "dv_connect":"Связь с разработчикам",
+        "logout":"Выход",
+        "about_us":"О нас",
+        "empty_data":"Данные пока пусто",
+        "search":"Поиск",
+        "popular_product_menu": "Популярные продукты",
+        "home":"Главный",
+        "order":"Заказы",
+        "profile":"Профиль",
+
+
+        "chose_cat":"Выберите категорию",
+        "fail_load":"Ошибка в загрузке",
+        "fail_connect_internet":"Плохое соединение",
+        "products": "Продукты",
+        "empty_token": "Отсуствует токен",
+        "basket":"Корзина",
+        "basket_empty":"Корзина пусто",
+        "follow":"Отправить",
+        
+        "allCount":"Общая каличество",
+        "allsumma":"Общая сумма",
+
+        "order_fail":"Ошибка при оформлении заказа",
+        "order_success":"Успешное оформление заказа",
+        "order_menu":"Оформление заказа",
+        "order_adress":"Адрес доставки",
+        "order_phone":"Текущий номер телефона ",
+        "order_validate_address":"Введите адрес",
+        "order_validate_phone":"Введите телефон",
+        "produc_count":"кг",
+        "order_to":"На заказ",
+
+        "order_success_phrase":"Dы можете контролировать своим заказом. Можете видеть статус вашего заказа.",
+        "orders": "Ваши заказы",
+
+
+        "history":"История",
+        "liked":"Нравится",
+
+        "empty_order": "У вас нет заказов",
+        "status_get":"Полученный",
+        "status_set":"В пути",
+        "status_show":"Просмотрен",
+        "status_have": "Принят",
+        "status_not_defind":"Неизвестный статус",
+        "stop_refuse":"Вы не можете удалить этот заказ, так как он уже получен или в пути",
+        "refuse_success":"Заказ успешно отменен",
+        "refuse_fail":"Ошибка при отмене заказа",
+        "refuse_order":"Отмена заказа",
+        "refuse_reason":"Причина отказа",
+        "btn_refuse"  :"Отмена",
+        "btn_refuse_to":"Отправить",
+        "order_sum":"Сумма заказа",
+        "order_date":"Дата",
+        "order_btn":"Заказать",
+        "order_detail":"Детали заказа",
+        "order_price":"Цена",
+        "order_detail_count":"Количества",
+        "description":"Описание",
+
+        "logout_success":"Успешный выход их аккаунта",
+        "clear_data":"Успешно очищен кеш",
+        "menu_clear_data":"Очистка кеша",
+        "langauge":"Язык",
+
+        "phone_to_order":"Текущий телефон номер",
+        "order_phone_validate":"Телефон номер должен быть(формат: +996xxxxxxxxx)",
+        "detail_of_order": "Детали заказа"
+
+    
+       
+}

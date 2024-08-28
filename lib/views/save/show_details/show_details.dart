@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:grocery/generated/l10n.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,11 +15,19 @@ class ShowDetails extends StatefulWidget {
 
 class _ShowDetailsState extends State<ShowDetails> {
   late Future<Map<String, dynamic>> _futureOrderDetails;
+  late String languageCode;
 
   @override
   void initState() {
     super.initState();
+    _loadLanguage();
     _futureOrderDetails = _fetchOrderDetails(widget.orderId);
+  }
+
+  Future<void> _loadLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    languageCode = prefs.getString('language_code') ?? 'ru'; // По умолчанию русский
+    setState(() {}); // Обновляем состояние для обновления UI
   }
 
   Future<Map<String, dynamic>> _fetchOrderDetails(int orderId) async {
@@ -27,7 +36,8 @@ class _ShowDetailsState extends State<ShowDetails> {
     final productsData = prefs.getString('products_data');
 
     final response = await http.get(
-      Uri.parse('https://dostavka.arendabook.com/api/order/details/show/$orderId'),
+      Uri.parse(
+          'https://dostavka.arendabook.com/api/order/details/show/$orderId'),
       headers: {'Authorization': 'Bearer $userToken'},
     );
 
@@ -54,10 +64,10 @@ class _ShowDetailsState extends State<ShowDetails> {
           'orderDetails': orderDetails,
         };
       } else {
-        throw Exception('Failed to load order details');
+        throw Exception(S.of(context).fail_load);
       }
     } else {
-      throw Exception('Failed to load order details');
+      throw Exception(S.of(context).fail_load);
     }
   }
 
@@ -65,7 +75,7 @@ class _ShowDetailsState extends State<ShowDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Детали заказа'),
+        title:  Text(S.of(context).detail_of_order),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _futureOrderDetails,
@@ -77,13 +87,18 @@ class _ShowDetailsState extends State<ShowDetails> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('Нет данных.'));
           } else {
-            final orderDetails = snapshot.data!['orderDetails'] as List<dynamic>;
+            final orderDetails =
+                snapshot.data!['orderDetails'] as List<dynamic>;
 
             return ListView.builder(
               itemCount: orderDetails.length,
               itemBuilder: (context, index) {
                 final detail = orderDetails[index];
                 final productInfo = detail['product_info'];
+
+                // Определение ключей для данных на основе текущего языка
+                final nameKey = languageCode == 'ru' ? 'ru_name' : 'name';
+                final descriptionKey = languageCode == 'ru' ? 'ru_description' : 'description';
 
                 return Card(
                   child: ListTile(
@@ -92,13 +107,13 @@ class _ShowDetailsState extends State<ShowDetails> {
                       width: 50,
                       height: 50,
                     ),
-                    title: Text(productInfo['ru_name']),
+                    title: Text(productInfo[nameKey]),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Цена: ${productInfo['price']} сом'),
-                        Text('Количество: ${detail['quantity']}'),
-                        Text('Описание: ${productInfo['ru_description']}'),
+                        Text('${S.of(context).order_price}: ${productInfo['price']} сом'),
+                        Text('${S.of(context).order_detail_count}: ${detail['quantity']}'),
+                        Text('${S.of(context).description}: ${productInfo[descriptionKey]}'),
                       ],
                     ),
                   ),

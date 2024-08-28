@@ -1,4 +1,8 @@
+
+
 import 'package:flutter/material.dart';
+import 'package:grocery/core/routes/app_routes.dart';
+import 'package:grocery/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/components/app_back_button.dart';
 import '../../core/components/buy_now_row_button.dart';
@@ -17,12 +21,21 @@ class ProductDetailsPage extends StatefulWidget {
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   bool isFavorite = false;
   bool isInCart = false;
+  String _languageCode = 'ru';
 
   @override
   void initState() {
     super.initState();
+    _loadLanguagePreference();
     _checkIfFavorite();
     _checkIfInCart();
+  }
+
+  Future<void> _loadLanguagePreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _languageCode = prefs.getString('language_code') ?? 'ru';
+    });
   }
 
   Future<void> _checkIfFavorite() async {
@@ -81,6 +94,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     });
   }
 
+  String _getLocalizedKey(String key) {
+    return _languageCode == 'ru' ? 'ru_$key' : key;
+  }
+
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
@@ -109,7 +126,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
           child: BuyNowRow(
-            onBuyButtonTap: () {},
+            onBuyButtonTap: () async {
+              await _addToCart();
+              Navigator.pushNamed(context, AppRoutes.cartPage);
+            },
             onCartButtonTap: _addToCart,
             isInCart: isInCart,
           ),
@@ -135,7 +155,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        product['ru_name'],
+                        product[_getLocalizedKey('name')],
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -158,7 +178,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Описание: ',
+                    '${S.of(context).description}: ',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -167,7 +187,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    product['ru_description'],
+                    product[_getLocalizedKey('description')],
                     textAlign: TextAlign.center,
                   ),
                 ],

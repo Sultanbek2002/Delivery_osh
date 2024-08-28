@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:grocery/core/routes/app_routes.dart';
+import 'package:grocery/generated/l10n.dart';
 import 'package:grocery/views/cart/checkout_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/components/app_back_button.dart';
@@ -98,10 +99,10 @@ class _CartPageState extends State<CartPage> {
             ? null
             : AppBar(
                 leading: const AppBackButton(),
-                title: const Text("Корзина"),
+                title:  Text(S.of(context).basket),
               ),
-        body: const Center(
-          child: Text('Корзина пусто'),
+        body:  Center(
+          child: Text(S.of(context).basket_empty),
         ),
       );
     }
@@ -111,7 +112,7 @@ class _CartPageState extends State<CartPage> {
           ? null
           : AppBar(
               leading: const AppBackButton(),
-              title: const Text('Корзина'),
+              title: Text(S.of(context).basket),
             ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -129,7 +130,7 @@ class _CartPageState extends State<CartPage> {
                   padding: const EdgeInsets.all(AppDefaults.padding),
                   child: ElevatedButton(
                     onPressed: _navigateToCheckout,
-                    child: const Text('Заказать'),
+                    child:  Text(S.of(context).follow),
                   ),
                 ),
               ),

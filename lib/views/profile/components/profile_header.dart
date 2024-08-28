@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:grocery/generated/l10n.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -74,7 +75,7 @@ class _UserDataState extends State<_UserData> {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Failed to load profile data');
+      throw Exception(S.of(context).fail_load);
     }
   }
 
@@ -88,7 +89,7 @@ class _UserDataState extends State<_UserData> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Ошибка: ${snapshot.error}'));
         } else if (!snapshot.hasData) {
-          return const Center(child: Text('Нет данных профиля'));
+          return  Center(child: Text(S.of(context).empty_data));
         } else {
           var profileData = snapshot.data!;
           var firstName = profileData['username'];

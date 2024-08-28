@@ -7,6 +7,7 @@ import 'package:grocery/core/constants/app_colors.dart';
 import 'package:grocery/core/constants/app_defaults.dart';
 import 'package:grocery/core/constants/app_images.dart';
 import 'package:grocery/core/routes/app_routes.dart';
+import 'package:grocery/views/entrypoint/entrypoint_ui.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '.././api_routes/apis.dart';
@@ -142,7 +143,11 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
           print("Успешно авторизован");
           // Очищаем сохраненные данные при успешной авторизации
           await _removeData();
-          Navigator.pushNamed(context, AppRoutes.entryPoint);
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const EntryPointUI()), // Здесь укажите страницу на которую хотите перейти после авторизации
+            (Route<dynamic> route) => false, // Удаляет все предыдущие маршруты
+          );
         } else {
           setState(() {
             _errorMessage = 'Ошибка: Токен отсутствует в ответе сервера.';

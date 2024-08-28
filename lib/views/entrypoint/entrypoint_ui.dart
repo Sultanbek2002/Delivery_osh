@@ -64,31 +64,44 @@ class _EntryPointUIState extends State<EntryPointUI> {
   // }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageTransitionSwitcher(
-        transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
-          return SharedAxisTransition(
-            animation: primaryAnimation,
-            secondaryAnimation: secondaryAnimation,
-            transitionType: SharedAxisTransitionType.horizontal,
-            fillColor: AppColors.scaffoldBackground,
-            child: child,
-          );
-        },
-        duration: AppDefaults.duration,
-        child: pages[currentIndex],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          onBottomNavigationTap(2);
-        },
-        backgroundColor: AppColors.primary,
-        child: SvgPicture.asset(AppIcons.cart),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AppBottomNavigationBar(
-        currentIndex: currentIndex,
-        onNavTap: onBottomNavigationTap,
+    return WillPopScope(
+      onWillPop: () async {
+        if (currentIndex != 0) {
+          setState(() {
+            currentIndex =
+                0; // Переключаем на первую вкладку, если не на первой
+          });
+          return false; // Блокируем возврат, чтобы остаться на текущей странице
+        } else {
+          return true; // Разрешаем возврат, если уже на первой вкладке
+        }
+      },
+      child: Scaffold(
+        body: PageTransitionSwitcher(
+          transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
+            return SharedAxisTransition(
+              animation: primaryAnimation,
+              secondaryAnimation: secondaryAnimation,
+              transitionType: SharedAxisTransitionType.horizontal,
+              fillColor: AppColors.scaffoldBackground,
+              child: child,
+            );
+          },
+          duration: AppDefaults.duration,
+          child: pages[currentIndex],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            onBottomNavigationTap(2);
+          },
+          backgroundColor: AppColors.primary,
+          child: SvgPicture.asset(AppIcons.cart),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: AppBottomNavigationBar(
+          currentIndex: currentIndex,
+          onNavTap: onBottomNavigationTap,
+        ),
       ),
     );
   }
