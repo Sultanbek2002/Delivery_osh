@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:grocery/views/entrypoint/entrypoint_ui.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +24,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool isPasswordShown = false;
+  bool isLoading = false;  // Track loading state
 
   onPassShowClicked() {
     setState(() {
@@ -36,37 +38,37 @@ class _LoginPageFormState extends State<LoginPageForm> {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
 
-      // Log email and password
-      print('Email: $email, Password: $password');
+      setState(() {
+        isLoading = true;  // Show loading indicator
+      });
 
       try {
         final response = await login(email, password);
 
-        // Log response
-        print('Response: $response');
-
         if (response.containsKey('access_token')) {
           final accessToken = response["access_token"];
-         
-
-          // Сохраняем токен и тип токена в SharedPreferences
+          
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('auth_token', accessToken);
-        
-          // Выводим токен на консоль
-          print('Access Token: $accessToken');
-          Navigator.pushNamed(context, AppRoutes.entryPoint);
+          
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const EntryPointUI()),
+            (Route<dynamic> route) => false,
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Login failed: ${response['Error']}')),
           );
         }
       } catch (e) {
-        // Log exception
-        print('Exception during login: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login failed: $e')),
         );
+      } finally {
+        setState(() {
+          isLoading = false;  // Hide loading indicator
+        });
       }
     }
   }
@@ -87,14 +89,12 @@ class _LoginPageFormState extends State<LoginPageForm> {
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
-      }else if(response.statusCode==401){
+      } else if (response.statusCode == 401) {
         return {'Error': 'Пройдите регистрацию.'};
-      }
-       else {
+      } else {
         throw Exception('Failed to login, status code: ${response.statusCode}');
       }
     } catch (e) {
-      // Log HTTP error
       print('HTTP request error: $e');
       throw Exception('Failed to login, HTTP error: $e');
     }
@@ -113,7 +113,6 @@ class _LoginPageFormState extends State<LoginPageForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Email Field
               const Text("Email"),
               const SizedBox(height: 8),
               TextFormField(
@@ -124,7 +123,6 @@ class _LoginPageFormState extends State<LoginPageForm> {
               ),
               const SizedBox(height: AppDefaults.padding),
 
-              // Password Field
               const Text("Пароль"),
               const SizedBox(height: 8),
               TextFormField(
@@ -144,7 +142,6 @@ class _LoginPageFormState extends State<LoginPageForm> {
                 ),
               ),
 
-              // Forget Password labelLarge
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -155,8 +152,11 @@ class _LoginPageFormState extends State<LoginPageForm> {
                 ),
               ),
 
-              // Login labelLarge
-              LoginButton(onPressed: onLogin),
+              if (isLoading) 
+                Center(child: CircularProgressIndicator()),  // Show loading animation
+              
+              if (!isLoading) 
+                LoginButton(onPressed: onLogin),
             ],
           ),
         ),
@@ -164,3 +164,4 @@ class _LoginPageFormState extends State<LoginPageForm> {
     );
   }
 }
+

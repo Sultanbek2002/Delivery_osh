@@ -17,6 +17,11 @@ Future<void> main() async {
   print('AccessToken: $accessToken');
   print('LastRoute: $lastRoute');
   print('the language ${language}');
+
+  if (accessToken == null) {
+    await prefs.clear();
+  }
+
   if (lastRoute != null && lastRoute.isNotEmpty) {
     runApp(MyApp(initialRoute: lastRoute));
   } else {
@@ -26,11 +31,10 @@ Future<void> main() async {
       final String initialRoute =
           accessToken != null ? AppRoutes.entryPoint : AppRoutes.onboarding;
       runApp(MyApp(initialRoute: initialRoute, language: language));
-    }else{
+    } else {
       final String initialRoute =
           accessToken != null ? AppRoutes.entryPoint : AppRoutes.onboarding;
       runApp(MyApp(initialRoute: initialRoute, language: language));
-     
     }
   }
 }
