@@ -33,11 +33,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "dostavka.arendabook.com.GreenLife"
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+    applicationId "dostavka.arendabook.com.greenlifeosh" // новое уникальное название пакета
+    minSdkVersion flutter.minSdkVersion
+    targetSdkVersion flutter.targetSdkVersion
+    versionCode flutterVersionCode.toInteger()
+    versionName flutterVersionName
     }
 
     signingConfigs {
