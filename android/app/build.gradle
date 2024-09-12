@@ -4,14 +4,6 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local.properties')
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
-}
-
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
     flutterVersionCode = '1'
@@ -23,7 +15,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.flutter_upgrde_app"
+    namespace "com.arendabook.greenlife"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -41,10 +33,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "dostavka.arendabook.com.GreenLife"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
@@ -62,14 +51,12 @@ android {
 
     buildTypes {
         release {
-            // Подключаем релизную подпись
             signingConfig signingConfigs.release
-            minifyEnabled false // Вы можете включить minify для уменьшения размера
+            minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 flutter {
