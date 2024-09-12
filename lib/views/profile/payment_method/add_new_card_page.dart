@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_credit_card/credit_card_widget.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_defaults.dart';
@@ -55,19 +54,19 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: AppDefaults.padding / 2),
-            CreditCardWidget(
-              cardNumber: cardNumber.text,
-              expiryDate: expireDate.text,
-              cardHolderName: holderName.text,
-              isHolderNameVisible: true,
-              backgroundNetworkImage: 'https://i.imgur.com/AMA5llS.png',
-              cvvCode: cvv.text,
-              showBackView: false,
-              cardType: CardType.visa,
-              onCreditCardWidgetChange: (v) {},
-              isChipVisible: false,
-            ),
+            // const SizedBox(height: AppDefaults.padding / 2),
+            // CreditCardWidget(
+            //   cardNumber: cardNumber.text,
+            //   expiryDate: expireDate.text,
+            //   cardHolderName: holderName.text,
+            //   isHolderNameVisible: true,
+            //   backgroundNetworkImage: 'https://i.imgur.com/AMA5llS.png',
+            //   cvvCode: cvv.text,
+            //   showBackView: false,
+            //   cardType: CardType.visa,
+            //   onCreditCardWidgetChange: (v) {},
+            //   isChipVisible: false,
+            // ),
             CreditCardForm(
               cardNumber: cardNumber,
               expireDate: expireDate,

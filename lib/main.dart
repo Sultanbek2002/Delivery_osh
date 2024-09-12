@@ -25,7 +25,7 @@ Future<void> main() async {
   if (lastRoute != null && lastRoute.isNotEmpty) {
     runApp(MyApp(initialRoute: lastRoute));
   } else {
-    final ConnectivityResult connectivityResult =
+    final List<ConnectivityResult> connectivityResult =
         await Connectivity().checkConnectivity();
     if (connectivityResult != ConnectivityResult.none) {
       final String initialRoute =
