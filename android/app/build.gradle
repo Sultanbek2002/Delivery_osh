@@ -15,7 +15,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.arendabook.greenlife"
+    namespace "dostavka.arendabook.com.greenlifeosh" // Сохраняем из last-back3
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -33,11 +33,12 @@ android {
     }
 
     defaultConfig {
-    applicationId "dostavka.arendabook.com.greenlifeosh" // новое уникальное название пакета
-    minSdkVersion flutter.minSdkVersion
-    targetSdkVersion flutter.targetSdkVersion
-    versionCode flutterVersionCode.toInteger()
-    versionName flutterVersionName
+        // Оставляем из last-back3
+        applicationId "dostavka.arendabook.com.greenlifeosh"
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
     }
 
     signingConfigs {
@@ -64,3 +65,4 @@ flutter {
 }
 
 dependencies {}
+
