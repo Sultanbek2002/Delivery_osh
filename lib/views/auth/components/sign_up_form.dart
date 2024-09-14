@@ -73,8 +73,8 @@ class _SignUpFormState extends State<SignUpForm> {
         } else if (response.statusCode == 400) {
           _errorMessage = "Почта или телефон существует";
         } else if(response.statusCode == 404){
-          _errorMessage="Сервер не найден"
-        };
+          _errorMessage="Сервер не найден";
+        }
         else if (response.statusCode == 302) {
           print('Redirect to: ${response.headers['location']}');
         } else {
