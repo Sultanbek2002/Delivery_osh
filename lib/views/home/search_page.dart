@@ -75,7 +75,7 @@ class _SearchPageState extends State<SearchPage> {
                   return ListTile(
                     title: Text(product['ru_name']),
                     subtitle: Text('${product['price']} руб'),
-                    leading: isOffline
+                    leading: isOffline==false
                         ? Icon(
                             Icons.image_not_supported, // Замените на нужную иконку из AppIcons
                           size: 60,
