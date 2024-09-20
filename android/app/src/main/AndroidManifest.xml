@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:label="Green Life"
+        android:label="Green Life Osh"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
 
@@ -17,7 +17,7 @@
             android:exported="false"/>
         
         <activity
-            android:name=".MainActivity"
+            android:name="dostavka.arendabook.com.greenlifeosh.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

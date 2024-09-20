@@ -1,4 +1,4 @@
-package com.example.flutter_upgrde_app
+package dostavka.arendabook.com.greenlifeosh
 
 import io.flutter.embedding.android.FlutterActivity
 
