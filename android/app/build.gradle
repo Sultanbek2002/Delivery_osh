@@ -19,7 +19,7 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '
 
 android {
     namespace "dostavka.arendabook.com.greenlifeosh" // Сохраняем из last-back3
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -39,7 +39,7 @@ android {
 
         applicationId "dostavka.arendabook.com.greenlifeosh"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         ndk {

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
+<uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="Green Life Osh"
         android:name="${applicationName}"
@@ -7,14 +7,11 @@
 
         <provider
             android:name="androidx.startup.InitializationProvider"
-            android:authorities="dostavka.arendabook.greenlifeosh.androidx-startup" 
+            android:authorities="dostavka.arendabook.com.greenlifeosh.androidx-startup" 
             android:exported="false"
             android:directBootAware="true"/>
 
-        <provider
-            android:name="flutter.image_provider"
-            android:authorities="dostavka.arendabook.com.greenlifeosh.flutter.image_provider" 
-            android:exported="false"/>
+        
         
         <activity
             android:name="dostavka.arendabook.com.greenlifeosh.MainActivity"

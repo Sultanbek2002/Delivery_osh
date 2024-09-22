@@ -10,6 +10,13 @@ buildscript {
         classpath 'com.android.tools.build:gradle:7.4.2'
     }
 }
+ext {
+    flutter = [
+        compileSdkVersion: 34,  // Замените на нужное значение
+        targetSdkVersion : 34,  // Замените на нужное значение
+       
+    ]
+}
 
 allprojects {
     repositories {
@@ -29,11 +36,3 @@ tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
 
-buildTypes {
-    release {
-        signingConfig signingConfigs.release
-        minifyEnabled false
-        shrinkResources false
-        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-    }
-}

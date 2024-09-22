@@ -141,16 +141,16 @@ class _LoginPageFormState extends State<LoginPageForm> {
                   ),
                 ),
               ),
-
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.forgotPassword);
-                  },
-                  child: const Text('Забыли пароль?'),
-                ),
-              ),
+              const SizedBox(height: AppDefaults.padding),
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: TextButton(
+              //     onPressed: () {
+              //       Navigator.pushNamed(context, AppRoutes.forgotPassword);
+              //     },
+              //     child: const Text('Забыли пароль?'),
+              //   ),
+              // ),
 
               if (isLoading) 
                 Center(child: CircularProgressIndicator()),  // Show loading animation

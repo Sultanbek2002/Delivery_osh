@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/constants/constants.dart';
@@ -54,55 +55,63 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const Spacer(),
-            Expanded(
-              flex: 8,
-              child: PageView.builder(
-                onPageChanged: onPageChange,
-                itemCount: items.length,
-                controller: controller,
-                itemBuilder: (context, index) {
-                  return OnboardingView(
-                    data: items[index],
-                  );
-                },
+      body: WillPopScope(
+        onWillPop: () async {
+          // Закрыть приложение
+          SystemNavigator.pop();
+          return true;
+        },
+        child: SafeArea(
+          child: Column(
+            children: [
+              const Spacer(),
+              Expanded(
+                flex: 8,
+                child: PageView.builder(
+                  onPageChanged: onPageChange,
+                  itemCount: items.length,
+                  controller: controller,
+                  itemBuilder: (context, index) {
+                    return OnboardingView(
+                      data: items[index],
+                    );
+                  },
+                ),
               ),
-            ),
-            const Spacer(),
-            Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                TweenAnimationBuilder(
-                  duration: AppDefaults.duration,
-                  tween: Tween<double>(
-                      begin: 0, end: (1 / items.length) * (currentPage + 1)),
-                  curve: Curves.easeInOutBack,
-                  builder: (context, double value, _) => SizedBox(
-                    height: 70,
-                    width: 70,
-                    child: CircularProgressIndicator(
-                      value: value,
-                      strokeWidth: 6,
-                      backgroundColor: AppColors.cardColor,
-                      color: AppColors.primary,
+              const Spacer(),
+              Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  TweenAnimationBuilder(
+                    duration: AppDefaults.duration,
+                    tween: Tween<double>(
+                        begin: 0, end: (1 / items.length) * (currentPage + 1)),
+                    curve: Curves.easeInOutBack,
+                    builder: (context, double value, _) => SizedBox(
+                      height: 70,
+                      width: 70,
+                      child: CircularProgressIndicator(
+                        value: value,
+                        strokeWidth: 6,
+                        backgroundColor: AppColors.cardColor,
+                        color: AppColors.primary,
+                      ),
                     ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: _gotoNextPage,
-                  style: ElevatedButton.styleFrom(shape: const CircleBorder()),
-                  child: SvgPicture.asset(
-                    AppIcons.arrowForward,
-                    color: Colors.white,
+                  ElevatedButton(
+                    onPressed: _gotoNextPage,
+                    style:
+                        ElevatedButton.styleFrom(shape: const CircleBorder()),
+                    child: SvgPicture.asset(
+                      AppIcons.arrowForward,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDefaults.padding),
-          ],
+                ],
+              ),
+              const SizedBox(height: AppDefaults.padding),
+            ],
+          ),
         ),
       ),
     );
