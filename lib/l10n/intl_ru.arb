@@ -73,7 +73,13 @@
 
         "phone_to_order":"Текущий телефон номер",
         "order_phone_validate":"Телефон номер должен быть(формат: +996xxxxxxxxx)",
-        "detail_of_order": "Детали заказа"
+        "detail_of_order": "Детали заказа",
+        "my_account":"Мой аккаунт",
+        "account_delete":"Удалить аккаунт",
+        "change_password":"Изменить пароль",
+         "success_delete_account":"Аккаунт успешно удален",
+         "failed_delete_account": "Ошибка при удалении",
+         "check_delete_account":"Чтобы удалить аккаунт нажмите два раза"
 
     
        

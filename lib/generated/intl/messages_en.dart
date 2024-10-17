@@ -23,6 +23,8 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about_us": MessageLookupByLibrary.simpleMessage("Биз жөнүндө"),
+        "account_delete":
+            MessageLookupByLibrary.simpleMessage("Аккаунтту өчүрүү"),
         "allCount":
             MessageLookupByLibrary.simpleMessage("Жалпы буйрутма эсеби"),
         "allsumma": MessageLookupByLibrary.simpleMessage("Жалпы сумма"),
@@ -31,6 +33,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Азырынча кутуча бош "),
         "btn_refuse": MessageLookupByLibrary.simpleMessage("Токтотуу"),
         "btn_refuse_to": MessageLookupByLibrary.simpleMessage("Жөнөтүү"),
+        "change_password":
+            MessageLookupByLibrary.simpleMessage("Сыр сөздү өзгөртүү"),
+        "check_delete_account": MessageLookupByLibrary.simpleMessage(
+            "Аккаунтту өчүрүү учун эки жолу басыныз"),
         "chose_cat": MessageLookupByLibrary.simpleMessage("Категориялар"),
         "clear_data":
             MessageLookupByLibrary.simpleMessage("Кештер ийгиликтүү тазаланды"),
@@ -50,6 +56,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Интернетке начар туташуу"),
         "fail_load":
             MessageLookupByLibrary.simpleMessage("Жүктөөдө каталык бар"),
+        "failed_delete_account":
+            MessageLookupByLibrary.simpleMessage("Аккаунтту өчүрүүдө каталык"),
         "follow": MessageLookupByLibrary.simpleMessage("Жөнөтүү"),
         "hello": MessageLookupByLibrary.simpleMessage("Салам"),
         "history": MessageLookupByLibrary.simpleMessage("Архивдер"),
@@ -61,6 +69,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Сиз аккаунттан ийгиликтүү чыктыныз"),
         "menu_clear_data":
             MessageLookupByLibrary.simpleMessage("Кештерди тазалоо"),
+        "my_account": MessageLookupByLibrary.simpleMessage("Жеке аккаунт"),
         "order": MessageLookupByLibrary.simpleMessage("Буйрутма"),
         "order_adress": MessageLookupByLibrary.simpleMessage("Адрести жазыныз"),
         "order_btn": MessageLookupByLibrary.simpleMessage("Буйрутма берүү"),
@@ -110,6 +119,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "status_show": MessageLookupByLibrary.simpleMessage("Көрүлгөн"),
         "stop_refuse": MessageLookupByLibrary.simpleMessage(
             "Буйрутма кабыл алынган же жолдо болгону учун кайтарууга болбойт"),
+        "success_delete_account": MessageLookupByLibrary.simpleMessage(
+            "Аккаунт ийгиликтүү өчүрүрүлдү"),
         "use_rule": MessageLookupByLibrary.simpleMessage("Колдонуу эрежеси"),
         "world": MessageLookupByLibrary.simpleMessage("Дуйно")
       };

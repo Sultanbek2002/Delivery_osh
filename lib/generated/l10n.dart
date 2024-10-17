@@ -689,6 +689,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Жеке аккаунт`
+  String get my_account {
+    return Intl.message(
+      'Жеке аккаунт',
+      name: 'my_account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Аккаунтту өчүрүү`
+  String get account_delete {
+    return Intl.message(
+      'Аккаунтту өчүрүү',
+      name: 'account_delete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Сыр сөздү өзгөртүү`
+  String get change_password {
+    return Intl.message(
+      'Сыр сөздү өзгөртүү',
+      name: 'change_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Аккаунт ийгиликтүү өчүрүрүлдү`
+  String get success_delete_account {
+    return Intl.message(
+      'Аккаунт ийгиликтүү өчүрүрүлдү',
+      name: 'success_delete_account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Аккаунтту өчүрүүдө каталык`
+  String get failed_delete_account {
+    return Intl.message(
+      'Аккаунтту өчүрүүдө каталык',
+      name: 'failed_delete_account',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Аккаунтту өчүрүү учун эки жолу басыныз`
+  String get check_delete_account {
+    return Intl.message(
+      'Аккаунтту өчүрүү учун эки жолу басыныз',
+      name: 'check_delete_account',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

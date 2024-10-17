@@ -76,7 +76,16 @@
 
         "phone_to_order":"Учурдагы телефон номер",
         "order_phone_validate":"Телефон номер жазылышы керек(формат: +996xxxxxxxxx)",
-        "detail_of_order":"Кененирээк маалымат"
+        "detail_of_order":"Кененирээк маалымат",
+
+        "my_account":"Жеке аккаунт",
+        "account_delete":"Аккаунтту өчүрүү",
+        "change_password":"Сыр сөздү өзгөртүү",
+         "success_delete_account":"Аккаунт ийгиликтүү өчүрүрүлдү",
+         "failed_delete_account": "Аккаунтту өчүрүүдө каталык",
+         "check_delete_account":"Аккаунтту өчүрүү учун эки жолу басыныз"
+
+
 
 
 

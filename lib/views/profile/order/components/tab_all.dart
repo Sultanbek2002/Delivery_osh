@@ -38,7 +38,7 @@ class _ReceivedOrdersPageState extends State<ReceivedOrdersPage> {
       if (responseData['status']) {
         List<dynamic> orders = responseData['orders'];
         // Фильтруем заказы, чтобы показать только полученные (status_get == 1)
-        orders = orders.where((order) => order['status_get'] == 1).toList();
+        orders = orders.where((order) => (order['status_get'] == 1 && order['all_summa'] != '0.00')) .toList();
         // Сортируем заказы по дате (от новых к старым)
         orders.sort((a, b) => DateTime.parse(b['created_at']).compareTo(DateTime.parse(a['created_at'])));
         return orders;

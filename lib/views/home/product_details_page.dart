@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:grocery/core/routes/app_routes.dart';
 import 'package:grocery/generated/l10n.dart';
@@ -81,13 +79,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Future<void> _addToCart() async {
     final prefs = await SharedPreferences.getInstance();
     final cart = prefs.getStringList('cart') ?? [];
-
-    if (isInCart) {
-      cart.remove(widget.product['id'].toString());
-    } else {
       cart.add(widget.product['id'].toString());
-    }
-
     await prefs.setStringList('cart', cart);
     setState(() {
       isInCart = !isInCart;
@@ -173,7 +165,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   const SizedBox(height: 8),
                   Text(
                     '${price} сом',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),

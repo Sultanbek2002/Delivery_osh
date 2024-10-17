@@ -2,5 +2,6 @@
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
     "files.autoSave": "afterDelay",
-    "files.autoSaveDelay": 1000
+    "files.autoSaveDelay": 1000,
+    "C_Cpp.errorSquiggles": "disabled"
 }

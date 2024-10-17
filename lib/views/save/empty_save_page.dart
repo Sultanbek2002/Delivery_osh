@@ -26,50 +26,82 @@ class _EmptySavePageState extends State<EmptySavePage> {
     _futureOrders = _fetchOrders();
   }
 
-  int _getOrderStatusPriority(Map<String, dynamic> order) {
-    if (order['status_set'] == 1) {
-      return 1; // In transit
-    } else if (order['status_have'] == 1) {
-      return 2; // Accepted
-    } else if (order['status_get'] == 1) {
-      return 3; // Received
-    } else {
-      return 4; // No specific status
-    }
-  }
-
   Future<List<dynamic>> _fetchOrders() async {
-  final prefs = await SharedPreferences.getInstance();
-  final userToken = prefs.getString('auth_token');
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString('auth_token');
 
-  final headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer $userToken',
-  };
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $userToken',
+    };
 
-  final response = await http.get(Uri.parse(_apiUrl), headers: headers);
+    final response = await http.get(Uri.parse(_apiUrl), headers: headers);
 
-  if (response.statusCode == 200) {
-    final responseData = json.decode(response.body);
-    if (responseData['status']) {
-      List<dynamic> orders = responseData['orders'];
-      orders = orders.where((order) => order['status_client'] != 0).toList();
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['status']) {
+        List<dynamic> orders = responseData['orders'];
 
-      // Sort orders based on status
-      orders.sort((a, b) {
-        int statusA = _getOrderStatusPriority(a);
-        int statusB = _getOrderStatusPriority(b);
-        return statusA.compareTo(statusB);
-      });
+        // Фильтруем заказы с нулевой суммой
+        orders = orders.where((order) => order['all_summa'] != '0.00').toList();
 
-      return orders;
+        // Отдельно собираем заказы по статусам
+        List<dynamic> ordersInTransit = [];
+        List<dynamic> ordersAccepted = [];
+        List<dynamic> ordersViewed = [];
+        List<dynamic> ordersReceived = [];
+
+        for (var order in orders) {
+          if (order['status_set'] == 1 && order['status_get']==0) {
+            ordersInTransit.add(order); // В пути
+          } else if (order['status_set'] == 0 && order['status_get'] == 0 && order['status_have']==1) {
+            ordersAccepted.add(order); // Принят
+          } else if (order['status_show'] == 1 && order['status_set'] == 0 && order['status_get'] == 0 && order['status_have'] == 0) {
+            ordersViewed.add(order); // Просмотрен
+          } else if (order['status_get'] == 1) {
+            ordersReceived.add(order); // Получен
+          }
+        }
+
+        // Объединяем заказы в нужном порядке
+        List<dynamic> sortedOrders = [
+          ...ordersInTransit,
+          ...ordersAccepted,
+          ...ordersViewed,
+          ...ordersReceived,
+        ];
+
+        return sortedOrders;
+      } else {
+        throw Exception(S.of(context).empty_order);
+      }
     } else {
       throw Exception(S.of(context).empty_order);
     }
-  } else {
-    throw Exception(S.of(context).empty_order);
   }
-}
+
+  int _getOrderPriority(Map<String, dynamic> order) {
+    // В пути
+    if (order['status_set'] == 1) {
+      return 1;
+    }
+    // Принят
+    else if (order['status_show'] == 1 && order['status_have'] == 1) {
+      return 2;
+    }
+    // Просмотрен
+    else if (order['status_show'] == 1) {
+      return 3;
+    }
+    // Получен
+    else if (order['status_get'] == 1) {
+      return 4;
+    }
+    // Остальные статусы
+    else {
+      return 5;
+    }
+  }
 
   String _getOrderStatus(Map<String, dynamic> order) {
     if (order['status_get'] == 1) {

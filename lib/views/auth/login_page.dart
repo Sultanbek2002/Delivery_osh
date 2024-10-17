@@ -4,7 +4,6 @@ import '../../core/constants/constants.dart';
 import 'components/dont_have_account_row.dart';
 import 'components/login_header.dart';
 import 'components/login_page_form.dart';
-import 'components/social_logins.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -21,7 +20,6 @@ class LoginPage extends StatelessWidget {
                 LoginPageHeader(),
                 LoginPageForm(),
                 SizedBox(height: AppDefaults.padding),
-                SocialLogins(),
                 DontHaveAccountRow(),
               ],
             ),

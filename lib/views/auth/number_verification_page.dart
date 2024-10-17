@@ -1,4 +1,4 @@
-import 'dart:async';
+ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -199,7 +199,7 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
         // Сохраняем данные после успешной отправки кода
         await _saveData();
         print(verificationCode);
-        if (verificationCode == "Verification code sent") {
+        if (verificationCode == "Код подтверждения отправлен") {
           setState(() {
             _verificationCode = verificationCode;
           });
@@ -209,13 +209,21 @@ class _NumberVerificationPageState extends State<NumberVerificationPage> {
                 content: Text(
                     'Код отправлен. Проверьте свою почту. Код истечет через три минуты.')),
           );
-        } else {
+        }
+         else {
           setState(() {
             _errorMessage =
                 'Ошибка: Код проверки отсутствует в ответе.Попробуйте обратно отправить';
           });
         }
-      } else {
+      }else if(response.statusCode == 422){
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text(
+                    'Есть активный код. Ждите 3 минуты, потом заново отпровьте. Иначе регистрируйтесь занова')),
+          );
+      } 
+      else {
         setState(() {
           _errorMessage = 'Ошибка при отправке данных';
         });
@@ -383,7 +391,7 @@ class OTPTextFields extends StatelessWidget {
 
 class ResendButton extends StatelessWidget {
   final VoidCallback onPressed;
-
+  
   const ResendButton({
     Key? key,
     required this.onPressed,

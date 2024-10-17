@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grocery/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/components/app_back_button.dart';
 import '../../core/constants/app_defaults.dart';
@@ -17,24 +18,41 @@ class DrawerPage extends StatelessWidget {
     await prefs.remove('auth_token');
     await prefs.remove('cart');
     await prefs.remove('favorites');
-    
-    print("Успешный выход аккаунта");
-    // Show success message
+
+    print("Успешный выход из аккаунта");
+    // Показываем сообщение об успешном выходе
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Вы успешно вышли из аккаунта.'),
         duration: Duration(seconds: 3),
       ),
     );
 
-    // Navigate to the login screen after a short delay to allow the message to be shown
-    await Future.delayed(Duration(seconds: 1));
+    // Переходим на экран входа после короткой задержки
+    await Future.delayed(const Duration(seconds: 1));
 
     Navigator.pushNamedAndRemoveUntil(
       context,
       AppRoutes.introLogin,
       (Route<dynamic> route) => false,
     );
+  }
+
+  // Открытие внешнего URL
+  Future<void> _launchURL(BuildContext context, String urlString) async {
+    final Uri url = Uri.parse(urlString);
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication, // Открыть ссылку во внешнем браузере
+      );
+    } else {
+      // Показать сообщение об ошибке
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Не удалось открыть ссылку')),
+      );
+    }
   }
 
   @override
@@ -55,9 +73,11 @@ class DrawerPage extends StatelessWidget {
             AppSettingsListTile(
               label: S.of(context).about_us,
               trailing: SvgPicture.asset(AppIcons.right),
-              onTap: () => Navigator.pushNamed(context, AppRoutes.aboutUs),
+              onTap: () {
+                // Открываем ссылку о компании
+                _launchURL(context, 'https://dostavka.arendabook.com/about');
+              },
             ),
-            
             AppSettingsListTile(
               label: S.of(context).dv_connect,
               trailing: SvgPicture.asset(AppIcons.right),

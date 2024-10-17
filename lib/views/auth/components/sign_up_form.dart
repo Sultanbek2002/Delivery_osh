@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:grocery/views/auth/login_page.dart';
 import 'package:grocery/views/auth/number_verification_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import './login_page_form.dart';
 class SignUpForm extends StatefulWidget {
   const SignUpForm({Key? key}) : super(key: key);
 
@@ -72,10 +73,9 @@ class _SignUpFormState extends State<SignUpForm> {
           );
         } else if (response.statusCode == 400) {
           _errorMessage = "Почта или телефон существует";
-        } else if(response.statusCode == 404){
-          _errorMessage="Сервер не найден";
-        }
-        else if (response.statusCode == 302) {
+        } else if (response.statusCode == 404) {
+          _errorMessage = "Сервер не найден";
+        } else if (response.statusCode == 302) {
           print('Redirect to: ${response.headers['location']}');
         } else {
           setState(() {
@@ -198,9 +198,32 @@ class _SignUpFormState extends State<SignUpForm> {
                   textInputAction: TextInputAction.done,
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _submitForm,
-                  child: const Text('Регистрация'),
+               
+                 Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: _submitForm,
+                      child: const Text('Регистрация'),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Есть аккаунт?',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 6, 146, 25), // Цвет текста
+                          decoration: TextDecoration.underline, // Подчеркивание текста
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

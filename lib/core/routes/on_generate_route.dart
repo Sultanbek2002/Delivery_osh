@@ -36,8 +36,7 @@ import '../../views/profile/coupon/coupon_page.dart';
 import '../../views/profile/notification_page.dart';
 import '../../views/profile/order/my_order_page.dart';
 import '../../views/profile/order/order_details.dart';
-import '../../views/profile/payment_method/add_new_card_page.dart';
-import '../../views/profile/payment_method/payment_method_page.dart';
+
 import '../../views/profile/profile_edit_page.dart';
 import '../../views/profile/settings/change_password_page.dart';
 import '../../views/profile/settings/change_phone_number_page.dart';
@@ -213,12 +212,6 @@ class RouteGenerator {
 
       case AppRoutes.contactUs:
         return CupertinoPageRoute(builder: (_) => const ContactUsPage());
-
-      case AppRoutes.paymentMethod:
-        return CupertinoPageRoute(builder: (_) => const PaymentMethodPage());
-
-      case AppRoutes.paymentCardAdd:
-        return CupertinoPageRoute(builder: (_) => const AddNewCardPage());
 
       default:
         return errorRoute();

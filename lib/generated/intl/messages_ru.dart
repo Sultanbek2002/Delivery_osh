@@ -23,12 +23,18 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "about_us": MessageLookupByLibrary.simpleMessage("О нас"),
+        "account_delete":
+            MessageLookupByLibrary.simpleMessage("Удалить аккаунт"),
         "allCount": MessageLookupByLibrary.simpleMessage("Общая каличество"),
         "allsumma": MessageLookupByLibrary.simpleMessage("Общая сумма"),
         "basket": MessageLookupByLibrary.simpleMessage("Корзина"),
         "basket_empty": MessageLookupByLibrary.simpleMessage("Корзина пусто"),
         "btn_refuse": MessageLookupByLibrary.simpleMessage("Отмена"),
         "btn_refuse_to": MessageLookupByLibrary.simpleMessage("Отправить"),
+        "change_password":
+            MessageLookupByLibrary.simpleMessage("Изменить пароль"),
+        "check_delete_account": MessageLookupByLibrary.simpleMessage(
+            "Чтобы удалить аккаунт нажмите два раза"),
         "chose_cat": MessageLookupByLibrary.simpleMessage("Выберите категорию"),
         "clear_data":
             MessageLookupByLibrary.simpleMessage("Успешно очищен кеш"),
@@ -47,6 +53,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "fail_connect_internet":
             MessageLookupByLibrary.simpleMessage("Плохое соединение"),
         "fail_load": MessageLookupByLibrary.simpleMessage("Ошибка в загрузке"),
+        "failed_delete_account":
+            MessageLookupByLibrary.simpleMessage("Ошибка при удалении"),
         "follow": MessageLookupByLibrary.simpleMessage("Отправить"),
         "hello": MessageLookupByLibrary.simpleMessage("Привет"),
         "history": MessageLookupByLibrary.simpleMessage("История"),
@@ -57,6 +65,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "logout_success":
             MessageLookupByLibrary.simpleMessage("Успешный выход их аккаунта"),
         "menu_clear_data": MessageLookupByLibrary.simpleMessage("Очистка кеша"),
+        "my_account": MessageLookupByLibrary.simpleMessage("Мой аккаунт"),
         "order": MessageLookupByLibrary.simpleMessage("Заказы"),
         "order_adress": MessageLookupByLibrary.simpleMessage("Адрес доставки"),
         "order_btn": MessageLookupByLibrary.simpleMessage("Заказать"),
@@ -105,6 +114,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "status_show": MessageLookupByLibrary.simpleMessage("Просмотрен"),
         "stop_refuse": MessageLookupByLibrary.simpleMessage(
             "Вы не можете удалить этот заказ, так как он уже получен или в пути"),
+        "success_delete_account":
+            MessageLookupByLibrary.simpleMessage("Аккаунт успешно удален"),
         "use_rule":
             MessageLookupByLibrary.simpleMessage("Правило использование"),
         "world": MessageLookupByLibrary.simpleMessage("world")
