@@ -19,13 +19,13 @@ class ProductTileSquare extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
       child: Material(
-        borderRadius: AppDefaults.borderRadius,
-        color: AppColors.scaffoldBackground,
+        borderRadius: BorderRadius.circular(15), // Скругленные углы
+        color: Color.fromARGB(255, 239, 249, 240), // Белый фон
         child: InkWell(
-          borderRadius: AppDefaults.borderRadius,
+          borderRadius: BorderRadius.circular(15),
           onTap: () => Navigator.pushNamed(
             context,
-            AppRoutes.productDetails,
+            AppRoutes.productDetails, 
             arguments: data, // Передача данных как Map
           ),
           child: Container(
@@ -33,52 +33,41 @@ class ProductTileSquare extends StatelessWidget {
             height: 310,
             padding: const EdgeInsets.all(AppDefaults.padding),
             decoration: BoxDecoration(
-              border: Border.all(width: 0.1, color: AppColors.placeholder),
-              borderRadius: AppDefaults.borderRadius,
+              border: Border.all(width: 0.1, color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(15),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center, // Центровка
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(AppDefaults.padding / 2),
-                  child: AspectRatio(
-                    aspectRatio: 1 / 1,
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10), // Скругление изображения
                     child: Image.network(
                       '${ApiConsts.urlbase}/images/${data['image']}',
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover, // Обрезка изображения по размеру контейнера
                     ),
                   ),
                 ),
-                const SizedBox(height: 3),
+                const SizedBox(height: 8), // Отступ между изображением и текстом
                 Text(
-                data['ru_name'] != null && data['ru_name'].isNotEmpty
-                    ? data['ru_name']
-                    : 'Название отсутствует',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(color: Colors.black),
-                maxLines: 2,
-                
-              ),
-
-              const SizedBox(height: 4), // Увеличьте отступ, если необходимо
-
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '${data['price']} cом',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(color: Colors.black),
-                    ),
-                    const SizedBox(width: 4),
-                    
-                  ],
-                )
+                  data['ru_name'] != null && data['ru_name'].isNotEmpty
+                      ? data['ru_name']
+                      : 'Название отсутствует',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(color: Colors.black),
+                  textAlign: TextAlign.center, // Центровка текста
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${data['price']} сом',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(color: Colors.black),
+                ),
               ],
             ),
           ),

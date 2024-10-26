@@ -36,7 +36,7 @@ class _EmptySavePageState extends State<EmptySavePage> {
     };
 
     final response = await http.get(Uri.parse(_apiUrl), headers: headers);
-
+    print(response.statusCode);
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       if (responseData['status']) {
@@ -52,11 +52,16 @@ class _EmptySavePageState extends State<EmptySavePage> {
         List<dynamic> ordersReceived = [];
 
         for (var order in orders) {
-          if (order['status_set'] == 1 && order['status_get']==0) {
+          if (order['status_set'] == 1 && order['status_get'] == 0) {
             ordersInTransit.add(order); // В пути
-          } else if (order['status_set'] == 0 && order['status_get'] == 0 && order['status_have']==1) {
+          } else if (order['status_set'] == 0 &&
+              order['status_get'] == 0 &&
+              order['status_have'] == 1) {
             ordersAccepted.add(order); // Принят
-          } else if (order['status_show'] == 1 && order['status_set'] == 0 && order['status_get'] == 0 && order['status_have'] == 0) {
+          } else if (order['status_show'] == 1 &&
+              order['status_set'] == 0 &&
+              order['status_get'] == 0 &&
+              order['status_have'] == 0) {
             ordersViewed.add(order); // Просмотрен
           } else if (order['status_get'] == 1) {
             ordersReceived.add(order); // Получен

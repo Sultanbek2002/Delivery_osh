@@ -18,7 +18,7 @@ class CategoryProductPage extends StatefulWidget {
 }
 
 class _CategoryProductPageState extends State<CategoryProductPage> {
-  List<Map<String, dynamic>> products = []; // Измените на List<Map<String, dynamic>>
+  List<Map<String, dynamic>> products = [];
   bool isLoading = true;
 
   @override
@@ -48,11 +48,11 @@ class _CategoryProductPageState extends State<CategoryProductPage> {
         },
       );
 
-      print('Response body: ${response.body}'); // Вывод всего ответа в консоль
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print('Decoded data: $data'); // Вывод декодированных данных
+        print('Decoded data: $data');
 
         setState(() {
           products = (data['product'] as List)
@@ -84,8 +84,9 @@ class _CategoryProductPageState extends State<CategoryProductPage> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white, // Цвет фона страницы
       appBar: AppBar(
-        title:  Text(S.of(context).products),
+        title: Text(S.of(context).products),
         leading: const BackButton(),
       ),
       body: GridView.builder(
@@ -99,7 +100,7 @@ class _CategoryProductPageState extends State<CategoryProductPage> {
         itemBuilder: (context, index) {
           final product = products[index];
           return ProductTileSquare(
-            data: product, // Передача данных как Map
+            data: product,
           );
         },
       ),

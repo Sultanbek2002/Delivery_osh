@@ -95,7 +95,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "phone_to_order":
             MessageLookupByLibrary.simpleMessage("Текущий телефон номер"),
         "popular_product_menu":
-            MessageLookupByLibrary.simpleMessage("Популярные продукты"),
+            MessageLookupByLibrary.simpleMessage("Продукты"),
         "produc_count": MessageLookupByLibrary.simpleMessage("кг"),
         "products": MessageLookupByLibrary.simpleMessage("Продукты"),
         "profile": MessageLookupByLibrary.simpleMessage("Профиль"),

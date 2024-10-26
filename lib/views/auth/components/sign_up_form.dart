@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:grocery/views/api_routes/apis.dart';
 import 'package:grocery/views/auth/login_page.dart';
 import 'package:grocery/views/auth/number_verification_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:grocery/views/entrypoint/entrypoint_ui.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import './login_page_form.dart';
+
 class SignUpForm extends StatefulWidget {
   const SignUpForm({Key? key}) : super(key: key);
 
@@ -39,8 +42,6 @@ class _SignUpFormState extends State<SignUpForm> {
       print('clear data');
       final data = {
         'username': _usernameController.text,
-        'firstname': _firstnameController.text,
-        'lastname': _lastnameController.text,
         'email': _emailController.text,
         'phone': _phoneController.text,
         'password': _passwordController.text,
@@ -51,7 +52,7 @@ class _SignUpFormState extends State<SignUpForm> {
       print('Generated token: $token');
 
       try {
-        var url = Uri.parse('https://dostavka.arendabook.com/api/register');
+        var url = Uri.parse('${ApiConsts.urlbase}/api/register');
         var response = await http.post(
           url,
           headers: {
@@ -59,18 +60,28 @@ class _SignUpFormState extends State<SignUpForm> {
           },
           body: json.encode(data),
         );
-
+        print(response.reasonPhrase);
         if (response.statusCode == 200) {
           final jsonResponse = jsonDecode(response.body);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NumberVerificationPage(
-                email: _emailController.text,
-                password: _passwordController.text,
-              ),
-            ),
-          );
+          final token = jsonResponse['access_token'];
+          if (token != null) {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('auth_token', token);
+            print("Успешно авторизован");
+            // Очищаем сохраненные данные при успешной авторизаци
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      const EntryPointUI()), // Здесь укажите страницу на которую хотите перейти после авторизации
+              (Route<dynamic> route) =>
+                  false, // Удаляет все предыдущие маршруты
+            );
+          } else {
+            setState(() {
+              _errorMessage = 'Ошибка: Токен отсутствует в ответе сервера.';
+            });
+          }
         } else if (response.statusCode == 400) {
           _errorMessage = "Почта или телефон существует";
         } else if (response.statusCode == 404) {
@@ -126,29 +137,11 @@ class _SignUpFormState extends State<SignUpForm> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Поле не может быть пустым';
-                    } else if (value.length < 5) {
-                      return 'Должен содержать более 5 символов';
+                    } else if (value.length < 3) {
+                      return 'Должен содержать более 3 символов';
                     }
                     return null; // Если все условия соблюдены, вернуть null, что означает отсутствие ошибок
                   },
-                  textInputAction: TextInputAction.next,
-                ),
-                const SizedBox(height: 16),
-                const Text("Имя"),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _firstnameController,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Поле не может быть пустым' : null,
-                  textInputAction: TextInputAction.next,
-                ),
-                const SizedBox(height: 16),
-                const Text("Фамилия"),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _lastnameController,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Поле не может быть пустым' : null,
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
@@ -198,8 +191,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   textInputAction: TextInputAction.done,
                 ),
                 const SizedBox(height: 16),
-               
-                 Row(
+                Row(
                   children: [
                     ElevatedButton(
                       onPressed: _submitForm,
@@ -219,7 +211,8 @@ class _SignUpFormState extends State<SignUpForm> {
                         'Есть аккаунт?',
                         style: TextStyle(
                           color: Color.fromARGB(255, 6, 146, 25), // Цвет текста
-                          decoration: TextDecoration.underline, // Подчеркивание текста
+                          decoration:
+                              TextDecoration.underline, // Подчеркивание текста
                         ),
                       ),
                     ),

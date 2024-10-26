@@ -1,6 +1,7 @@
 
 import 'package:grocery/generated/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery/views/api_routes/apis.dart';
 import 'package:http/http.dart' as http; // Добавьте пакет http для запросов
 import 'package:grocery/core/routes/app_routes.dart';
 import '../../core/components/app_back_button.dart';
@@ -14,7 +15,7 @@ class PasswordResetPage extends StatelessWidget {
     final String? token = prefs.getString('auth_token');
     if (token != null) {
       final response = await http.get(
-        Uri.parse('https://dostavka.arendabook.com/api/accaunt/dissable'),
+        Uri.parse('${ApiConsts.urlbase}/api/accaunt/dissable'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token', // Добавьте токен в заголовок

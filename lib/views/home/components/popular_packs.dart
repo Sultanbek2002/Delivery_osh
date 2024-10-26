@@ -25,8 +25,9 @@ class _PopularPacksState extends State<PopularPacks> {
   void initState() {
     super.initState();
     _loadLanguagePreference(); // Load language preference
-    _loadCachedProducts();  // Load cached products immediately
-    _futureUpdate = _fetchAndUpdateProducts();  // Fetch updates in the background
+    _loadCachedProducts(); // Load cached products immediately
+    _futureUpdate =
+        _fetchAndUpdateProducts(); // Fetch updates in the background
   }
 
   Future<void> _loadLanguagePreference() async {
@@ -94,7 +95,7 @@ class _PopularPacksState extends State<PopularPacks> {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         if (_cachedProducts.isEmpty)
-           Center(child: Text(S.of(context).empty_data))
+          Center(child: Text(S.of(context).empty_data))
         else
           GridView.builder(
             shrinkWrap: true,
@@ -118,7 +119,8 @@ class _PopularPacksState extends State<PopularPacks> {
           future: _futureUpdate,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SizedBox.shrink(); // Background update, so no need to show a loader
+              return const SizedBox
+                  .shrink(); // Background update, so no need to show a loader
             } else if (snapshot.hasError) {
               return Center(child: Text('Ошибка: ${snapshot.error}'));
             } else {
@@ -132,7 +134,12 @@ class _PopularPacksState extends State<PopularPacks> {
 }
 
 class BundleTileSquare extends StatelessWidget {
-  const BundleTileSquare({Key? key, required this.data, required this.languageCode, this.isOffline = false}) : super(key: key);
+  const BundleTileSquare({
+    Key? key,
+    required this.data,
+    required this.languageCode,
+    this.isOffline = false,
+  }) : super(key: key);
 
   final dynamic data;
   final String languageCode;
@@ -146,7 +153,7 @@ class BundleTileSquare extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16), // Скругление углов стало больше
       child: InkWell(
         onTap: () {
           Navigator.pushNamed(
@@ -155,11 +162,20 @@ class BundleTileSquare extends StatelessWidget {
             arguments: data,
           );
         },
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         child: Container(
+          padding:
+              const EdgeInsets.all(8), // Внутренний отступ для всей карточки
           decoration: BoxDecoration(
-            border: Border.all(width: 0.1, color: const Color.fromARGB(255, 39, 37, 37)),
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16), // Скругленные углы
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1), // Легкая тень
+                blurRadius: 6,
+                offset: Offset(0, 4), // Смещение тени
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -167,23 +183,31 @@ class BundleTileSquare extends StatelessWidget {
               Expanded(
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: isOffline
-                      ? Icon(
-                          Icons.image_not_supported, // Replace with the appropriate icon from AppIcons
-                          size: 60,
-                          color: Colors.grey,
-                        )
-                      : Image.network(
-                          'https://dostavka.arendabook.com/images/${data['image']}',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.image_not_supported, // Replace with the appropriate icon from AppIcons
-                              size: 60,
-                              color: Colors.grey,
-                            );
-                          },
-                        ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(
+                        8), // Внутренний отступ для изображения
+                    child: isOffline
+                        ? Icon(
+                            Icons.image_not_supported,
+                            size: 60,
+                            color: Colors.grey,
+                          )
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                12), // Скругление для изображения
+                            child: Image.network(
+                              '${ApiConsts.urlbase}/images/${data['image']}',
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.image_not_supported,
+                                  size: 60,
+                                  color: Colors.grey,
+                                );
+                              },
+                            ),
+                          ),
+                  ),
                 ),
               ),
               Padding(
@@ -193,7 +217,8 @@ class BundleTileSquare extends StatelessWidget {
                   children: [
                     Text(
                       data[_getLocalizedKey('name')],
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -206,7 +231,8 @@ class BundleTileSquare extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       '${data['price']} сом',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

@@ -2,7 +2,7 @@ name: grocery
 description: "A new Flutter project."
 publish_to: "none" # Убедитесь, что эта строка оставлена, если проект не предназначен для публикации на pub.dev
 
-version: 1.0.0+3
+version: 1.0.0+4
 
 environment:
   sdk: ">=3.2.0 <4.0.0"

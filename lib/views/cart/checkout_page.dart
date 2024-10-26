@@ -66,7 +66,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           headers: headers,
           body: body);
       Navigator.pop(context);
-
+      print(response);
       if (response.statusCode == 200) {
         await _clearCart();
         Navigator.pushAndRemoveUntil(

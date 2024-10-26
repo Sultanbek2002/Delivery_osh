@@ -150,10 +150,10 @@ class S {
     );
   }
 
-  /// `Белгилүү тандалмалар`
+  /// `Товарлар`
   String get popular_product_menu {
     return Intl.message(
-      'Белгилүү тандалмалар',
+      'Товарлар',
       name: 'popular_product_menu',
       desc: '',
       args: [],
