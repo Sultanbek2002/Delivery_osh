@@ -43,7 +43,7 @@ class _EmptySavePageState extends State<EmptySavePage> {
         List<dynamic> orders = responseData['orders'];
 
         // Фильтруем заказы с нулевой суммой
-        orders = orders.where((order) => order['all_summa'] != '0.00').toList();
+        orders = orders.where((order) => order['all_summa'] != '0.00' && order["comment_client"]== null).toList() ;
 
         // Отдельно собираем заказы по статусам
         List<dynamic> ordersInTransit = [];

@@ -1,3 +1,4 @@
+import 'dart:io'; // Для определения платформы
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:grocery/generated/l10n.dart';
@@ -38,6 +39,11 @@ Future<void> main() async {
       runApp(MyApp(initialRoute: initialRoute, language: language));
     }
   }
+}
+
+// Функция для проверки, является ли устройство iPad
+bool isIPad(BuildContext context) {
+  return Platform.isIOS && MediaQuery.of(context).size.shortestSide >= 600;
 }
 
 class MyApp extends StatefulWidget {
@@ -81,6 +87,26 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    // Проверка, если пользователь зашел с iPad
+    if (isIPad(context)) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'eGrocery',
+        theme: AppTheme.defaultTheme,
+        home: Scaffold(
+          body: Center(
+            child: Text(
+              'Это приложение поддерживается только на iPhone. '
+              'Пожалуйста, используйте iPhone для работы с приложением.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 36),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Основное приложение для всех других устройств (например, iPhone)
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'eGrocery',
@@ -93,7 +119,6 @@ class _MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      // locale: _locale,
       locale: _locale,
       supportedLocales: S.delegate.supportedLocales,
     );
@@ -116,6 +141,7 @@ class NoInternetApp extends StatelessWidget {
     );
   }
 }
+
 
 
 // import 'package:flutter/material.dart';
