@@ -61,6 +61,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "home": MessageLookupByLibrary.simpleMessage("Главный"),
         "langauge": MessageLookupByLibrary.simpleMessage("Язык"),
         "liked": MessageLookupByLibrary.simpleMessage("Нравится"),
+        "login": MessageLookupByLibrary.simpleMessage("Войти"),
         "logout": MessageLookupByLibrary.simpleMessage("Выход"),
         "logout_success":
             MessageLookupByLibrary.simpleMessage("Успешный выход их аккаунта"),
@@ -96,6 +97,22 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Текущий телефон номер"),
         "popular_product_menu":
             MessageLookupByLibrary.simpleMessage("Продукты"),
+        "privacy_intro": MessageLookupByLibrary.simpleMessage(
+            "Мы стремимся защитить вашу конфиденциальность и обеспечить безопасность ваших данных."),
+        "privacy_section1_content": MessageLookupByLibrary.simpleMessage(
+            "Мы собираем данные только для предоставления услуг и улучшения работы приложения."),
+        "privacy_section1_title":
+            MessageLookupByLibrary.simpleMessage("1. Сбор данных"),
+        "privacy_section2_content": MessageLookupByLibrary.simpleMessage(
+            "Мы используем современные технологии для безопасного хранения и передачи данных."),
+        "privacy_section2_title":
+            MessageLookupByLibrary.simpleMessage("2. Хранение данных"),
+        "privacy_section3_content": MessageLookupByLibrary.simpleMessage(
+            "Вы можете запросить удаление аккаунта, и мы удалим все связанные данные."),
+        "privacy_section3_title":
+            MessageLookupByLibrary.simpleMessage("3. Удаление аккаунта"),
+        "privacy_title":
+            MessageLookupByLibrary.simpleMessage("Политика конфиденциальности"),
         "produc_count": MessageLookupByLibrary.simpleMessage("кг"),
         "products": MessageLookupByLibrary.simpleMessage("Продукты"),
         "profile": MessageLookupByLibrary.simpleMessage("Профиль"),
@@ -105,7 +122,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "refuse_reason": MessageLookupByLibrary.simpleMessage("Причина отказа"),
         "refuse_success":
             MessageLookupByLibrary.simpleMessage("Заказ успешно отменен"),
+        "register": MessageLookupByLibrary.simpleMessage("Регистрация"),
         "search": MessageLookupByLibrary.simpleMessage("Поиск"),
+        "sign_or_signup":
+            MessageLookupByLibrary.simpleMessage("Войти или регистрация"),
         "status_get": MessageLookupByLibrary.simpleMessage("Полученный"),
         "status_have": MessageLookupByLibrary.simpleMessage("Принят"),
         "status_not_defind":
@@ -116,8 +136,11 @@ class MessageLookup extends MessageLookupByLibrary {
             "Вы не можете удалить этот заказ, так как он уже получен или в пути"),
         "success_delete_account":
             MessageLookupByLibrary.simpleMessage("Аккаунт успешно удален"),
+        "to_main": MessageLookupByLibrary.simpleMessage("На главную"),
         "use_rule":
             MessageLookupByLibrary.simpleMessage("Правило использование"),
+        "welcome_auth": MessageLookupByLibrary.simpleMessage(
+            "Чтобы заказать и увидеть заказы вам надо войти в ваш аккаунт"),
         "world": MessageLookupByLibrary.simpleMessage("world")
       };
 }

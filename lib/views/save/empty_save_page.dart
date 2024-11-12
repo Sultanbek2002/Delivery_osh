@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:grocery/core/routes/app_routes.dart';
 import 'package:grocery/generated/l10n.dart';
 import 'package:grocery/views/api_routes/apis.dart';
 import 'package:http/http.dart' as http;
@@ -27,23 +28,31 @@ class _EmptySavePageState extends State<EmptySavePage> {
   }
 
   Future<List<dynamic>> _fetchOrders() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userToken = prefs.getString('auth_token');
+  final prefs = await SharedPreferences.getInstance();
+  final userToken = prefs.getString('auth_token');
 
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $userToken',
-    };
+  if (userToken == null) {
+   
+    // Перенаправляем на экран авторизации или показываем диалог
+    Navigator.pushReplacementNamed(context, AppRoutes.introLogin);
+    return [];
+  }
 
+  final headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $userToken',
+  };
+
+  try {
     final response = await http.get(Uri.parse(_apiUrl), headers: headers);
-    print(response.statusCode);
+
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       if (responseData['status']) {
         List<dynamic> orders = responseData['orders'];
 
         // Фильтруем заказы с нулевой суммой
-        orders = orders.where((order) => order['all_summa'] != '0.00' && order["comment_client"]== null).toList() ;
+        orders = orders.where((order) => order['all_summa'] != '0.00' && order["comment_client"] == null).toList();
 
         // Отдельно собираем заказы по статусам
         List<dynamic> ordersInTransit = [];
@@ -54,14 +63,9 @@ class _EmptySavePageState extends State<EmptySavePage> {
         for (var order in orders) {
           if (order['status_set'] == 1 && order['status_get'] == 0) {
             ordersInTransit.add(order); // В пути
-          } else if (order['status_set'] == 0 &&
-              order['status_get'] == 0 &&
-              order['status_have'] == 1) {
+          } else if (order['status_set'] == 0 && order['status_get'] == 0 && order['status_have'] == 1) {
             ordersAccepted.add(order); // Принят
-          } else if (order['status_show'] == 1 &&
-              order['status_set'] == 0 &&
-              order['status_get'] == 0 &&
-              order['status_have'] == 0) {
+          } else if (order['status_show'] == 1 && order['status_set'] == 0 && order['status_get'] == 0 && order['status_have'] == 0) {
             ordersViewed.add(order); // Просмотрен
           } else if (order['status_get'] == 1) {
             ordersReceived.add(order); // Получен
@@ -80,10 +84,25 @@ class _EmptySavePageState extends State<EmptySavePage> {
       } else {
         throw Exception(S.of(context).empty_order);
       }
+    } else if (response.statusCode == 401) {
+      // Ошибка авторизации, перенаправление на экран авторизации
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(S.of(context).fail_load)),
+      );
+      Navigator.pushReplacementNamed(context, AppRoutes.introLogin);
+      return [];
     } else {
       throw Exception(S.of(context).empty_order);
     }
+  } catch (e) {
+    // Ошибка сети или другая ошибка
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(S.of(context).dv_connect)),
+    );
+    return [];
   }
+}
+
 
   int _getOrderPriority(Map<String, dynamic> order) {
     // В пути

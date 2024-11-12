@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grocery/generated/l10n.dart';
+import 'package:grocery/main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,10 +25,9 @@ class _PopularPacksState extends State<PopularPacks> {
   @override
   void initState() {
     super.initState();
-    _loadLanguagePreference(); // Load language preference
-    _loadCachedProducts(); // Load cached products immediately
-    _futureUpdate =
-        _fetchAndUpdateProducts(); // Fetch updates in the background
+    _loadLanguagePreference();
+    _loadCachedProducts();
+    _futureUpdate = _fetchAndUpdateProducts();
   }
 
   Future<void> _loadLanguagePreference() async {
@@ -63,11 +63,8 @@ class _PopularPacksState extends State<PopularPacks> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-
-        // Update SharedPreferences
         await prefs.setString('products_data', json.encode(data['product']));
 
-        // Optionally, update the UI with the new data
         setState(() {
           _cachedProducts = data['product'];
         });
@@ -86,13 +83,18 @@ class _PopularPacksState extends State<PopularPacks> {
     return _languageCode == 'ru' ? 'ru_$key' : key;
   }
 
+  bool isIPad(BuildContext context) {
+    final deviceWidth = MediaQuery.of(context).size.width;
+    return deviceWidth > 600; // Проверка на iPad или другие большие устройства
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Text(
           S.of(context).popular_product_menu,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: isIPad(context) ? 24 : 20, fontWeight: FontWeight.bold),
         ),
         if (_cachedProducts.isEmpty)
           Center(child: Text(S.of(context).empty_data))
@@ -101,11 +103,11 @@ class _PopularPacksState extends State<PopularPacks> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.all(AppDefaults.padding),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 0.8, // Adjusted ratio to fit content better
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: isIPad(context) ? 4 : 2, // Больше колонок для iPad
+              crossAxisSpacing: isIPad(context) ? 16 : 10, // Отступы
+              mainAxisSpacing: isIPad(context) ? 16 : 10, // Отступы
+              childAspectRatio: isIPad(context) ? 1.2 : 0.8, // Более широкий для iPad
             ),
             itemCount: _cachedProducts.length,
             itemBuilder: (context, index) {
@@ -119,12 +121,11 @@ class _PopularPacksState extends State<PopularPacks> {
           future: _futureUpdate,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SizedBox
-                  .shrink(); // Background update, so no need to show a loader
+              return const SizedBox.shrink();
             } else if (snapshot.hasError) {
               return Center(child: Text('Ошибка: ${snapshot.error}'));
             } else {
-              return const SizedBox.shrink(); // Update completed without error
+              return const SizedBox.shrink();
             }
           },
         ),
@@ -153,7 +154,7 @@ class BundleTileSquare extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(16), // Скругление углов стало больше
+      borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: () {
           Navigator.pushNamed(
@@ -164,16 +165,15 @@ class BundleTileSquare extends StatelessWidget {
         },
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding:
-              const EdgeInsets.all(8), // Внутренний отступ для всей карточки
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16), // Скругленные углы
+            borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1), // Легкая тень
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 6,
-                offset: Offset(0, 4), // Смещение тени
+                offset: Offset(0, 4),
               ),
             ],
           ),
@@ -184,8 +184,7 @@ class BundleTileSquare extends StatelessWidget {
                 child: AspectRatio(
                   aspectRatio: 1,
                   child: Padding(
-                    padding: const EdgeInsets.all(
-                        8), // Внутренний отступ для изображения
+                    padding: const EdgeInsets.all(8),
                     child: isOffline
                         ? Icon(
                             Icons.image_not_supported,
@@ -193,8 +192,7 @@ class BundleTileSquare extends StatelessWidget {
                             color: Colors.grey,
                           )
                         : ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                                12), // Скругление для изображения
+                            borderRadius: BorderRadius.circular(12),
                             child: Image.network(
                               '${ApiConsts.urlbase}/images/${data['image']}',
                               fit: BoxFit.cover,
@@ -217,8 +215,10 @@ class BundleTileSquare extends StatelessWidget {
                   children: [
                     Text(
                       data[_getLocalizedKey('name')],
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: isIPad(context) ? 18 : 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -231,8 +231,10 @@ class BundleTileSquare extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       '${data['price']} сом',
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: isIPad(context) ? 18 : 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),

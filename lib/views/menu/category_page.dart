@@ -28,15 +28,7 @@ class _CategoryProductPageState extends State<CategoryProductPage> {
   }
 
   Future<void> fetchProducts() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? accessToken = prefs.getString('auth_token');
 
-    if (accessToken == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(S.of(context).empty_token)),
-      );
-      return;
-    }
 
     final url = '${ApiConsts.urlbase}/api/CategoryProduct/${widget.categoryId}';
     try {
@@ -44,7 +36,7 @@ class _CategoryProductPageState extends State<CategoryProductPage> {
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $accessToken',
+          
         },
       );
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:grocery/generated/l10n.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_defaults.dart';
 import '../../../core/routes/app_routes.dart';
@@ -23,7 +23,7 @@ class IntroPageBodyArea extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Добра пожаловать',
+                    S.of(context).welcome_auth,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold, color: Colors.black),
                   ),
@@ -46,7 +46,7 @@ class IntroPageBodyArea extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () =>
                         Navigator.pushNamed(context, AppRoutes.login),
-                    child: const Text('Вход через e-mail почта'),
+                    child:  Text(S.of(context).login),
                   ),
                 ),
                 const SizedBox(height: AppDefaults.padding),
@@ -58,9 +58,22 @@ class IntroPageBodyArea extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black, backgroundColor: Colors.white,
                     ),
-                    child: const Text('Быстрая регистрация'),
+                    child:Text(S.of(context).register),
+                  ),
+                ),
+                const SizedBox(height: AppDefaults.padding),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, AppRoutes.entryPoint),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black, backgroundColor: Colors.white,
+                    ),
+                    child: Text(S.of(context).to_main),
                   ),
                 )
+
               ],
             ),
           )

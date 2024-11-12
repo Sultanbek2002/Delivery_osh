@@ -18,22 +18,34 @@ class ProfileMenuOptions extends StatefulWidget {
 
 class _ProfileMenuOptionsState extends State<ProfileMenuOptions> {
   String? _selectedLanguage;
+  bool _isAuthorized = false; // Флаг авторизации
 
   @override
   void initState() {
     super.initState();
-    _loadLanguagePreference(); // Загружаем сохранённый язык при инициализации
+    _loadLanguagePreference();
+    _checkAuthorization();
   }
+
+  // Метод для проверки авторизации
+  Future<void> _checkAuthorization() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isAuthorized = prefs.getString('auth_token') != null; // Проверка наличия токена
+    });
+  }
+
   void _navigateToPasswordReset() {
-  Navigator.push(
-    context,
-    CupertinoPageRoute(builder: (context) => const PasswordResetPage()),
-  );
-}
+    Navigator.push(
+      context,
+      CupertinoPageRoute(builder: (context) => const PasswordResetPage()),
+    );
+  }
+
   Future<void> _loadLanguagePreference() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _selectedLanguage = prefs.getString('language_code') ?? 'ru'; // Если ничего не сохранено, по умолчанию 'ru'
+      _selectedLanguage = prefs.getString('language_code') ?? 'ru';
     });
   }
 
@@ -49,7 +61,6 @@ class _ProfileMenuOptionsState extends State<ProfileMenuOptions> {
     );
 
     await Future.delayed(Duration(seconds: 1));
-
     Navigator.pushNamedAndRemoveUntil(
       context,
       AppRoutes.introLogin,
@@ -59,12 +70,12 @@ class _ProfileMenuOptionsState extends State<ProfileMenuOptions> {
 
   Future<void> _clearData(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    final authToken = prefs.getString('auth_token'); // Сохраняем auth_token
+    final authToken = prefs.getString('auth_token');
 
-    await prefs.clear(); // Очищаем все данные
+    await prefs.clear();
 
     if (authToken != null) {
-      await prefs.setString('auth_token', authToken); // Восстанавливаем auth_token
+      await prefs.setString('auth_token', authToken);
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -80,10 +91,9 @@ class _ProfileMenuOptionsState extends State<ProfileMenuOptions> {
     await prefs.setString('language_code', locale.languageCode);
 
     setState(() {
-      _selectedLanguage = locale.languageCode; // Обновляем UI
+      _selectedLanguage = locale.languageCode;
     });
 
-    // Перезагрузка приложения для применения изменений
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => MyApp(initialRoute: AppRoutes.entryPoint, language: locale.languageCode)),
@@ -103,21 +113,27 @@ class _ProfileMenuOptionsState extends State<ProfileMenuOptions> {
       ),
       child: Column(
         children: [
-          ProfileListTile(
-            title: S.of(context).logout,
-            icon: AppIcons.profileLogout,
-            onTap: () => _logout(context),
-          ),
+          if (_isAuthorized) // Отображаем, если пользователь авторизован
+            ProfileListTile(
+              title: S.of(context).logout,
+              icon: AppIcons.profileLogout,
+              onTap: () => _logout(context),
+            ),
           ProfileListTile(
             title: S.of(context).menu_clear_data,
             icon: AppIcons.delete,
             onTap: () => _clearData(context),
           ),
-          ProfileListTile( onTap: _navigateToPasswordReset, icon: AppIcons.profile, title: S.of(context).my_account),
+          if (_isAuthorized) // Отображаем, если пользователь авторизован
+            ProfileListTile(
+              onTap: _navigateToPasswordReset,
+              icon: AppIcons.profile,
+              title: S.of(context).my_account,
+            ),
           ListTile(
             title: Text(S.of(context).langauge),
             trailing: DropdownButton<String>(
-              value: _selectedLanguage, // Устанавливаем выбранное значение
+              value: _selectedLanguage,
               items: [
                 DropdownMenuItem(child: Text('Русский'), value: 'ru'),
                 DropdownMenuItem(child: Text('Кыргыз'), value: 'ky'),

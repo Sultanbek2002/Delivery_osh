@@ -23,6 +23,23 @@ class _CheckoutPageState extends State<CheckoutPage> {
   final TextEditingController _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthorization();
+  }
+
+  // Проверка авторизации при входе на страницу
+  Future<void> _checkAuthorization() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userToken = prefs.getString('auth_token');
+
+    if (userToken == null || userToken.isEmpty) {
+      // Перенаправить на страницу авторизации, если токен отсутствует
+      Navigator.pushReplacementNamed(context, AppRoutes.introLogin);
+    }
+  }
+
   Future<void> _clearCart() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('cart', []);
@@ -34,13 +51,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
 
     final prefs = await SharedPreferences.getInstance();
-    final userToken =
-        prefs.getString('auth_token'); // Замените на ваш метод получения токена
+    final userToken = prefs.getString('auth_token');
 
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $userToken', // Добавляем токен в заголовки
     };
+
     final body = json.encode({
       'map': _addressController.text, // Используем значение из текстового поля
       'number': _phoneController.text,
@@ -66,7 +83,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           headers: headers,
           body: body);
       Navigator.pop(context);
-      print(response);
       if (response.statusCode == 200) {
         await _clearCart();
         Navigator.pushAndRemoveUntil(
@@ -77,11 +93,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
           (Route<dynamic> route) => false,
         );
       } else {
-        print("statusCode: ${response.statusCode}-${response.reasonPhrase}");
         _showErrorDialog(context, S.of(context).order_fail);
       }
     } catch (e) {
-      print("Error ${e}");
       Navigator.pop(context);
       _showErrorDialog(context, S.of(context).fail_connect_internet);
     }

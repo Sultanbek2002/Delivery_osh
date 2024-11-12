@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grocery/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -55,6 +55,12 @@ class DrawerPage extends StatelessWidget {
     }
   }
 
+  Future<bool> _isUserAuthenticated() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? authToken = prefs.getString('auth_token');
+    return authToken != null && authToken.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,11 +89,29 @@ class DrawerPage extends StatelessWidget {
               trailing: SvgPicture.asset(AppIcons.right),
               onTap: () => Navigator.pushNamed(context, AppRoutes.contactUs),
             ),
-            const SizedBox(height: AppDefaults.padding * 3),
             AppSettingsListTile(
-              label: S.of(context).logout,
+              label: S.of(context).privacy_title,
               trailing: SvgPicture.asset(AppIcons.right),
-              onTap: () => _logout(context),
+              onTap: () => Navigator.pushNamed(context, AppRoutes.faq),
+            ),
+            const SizedBox(height: AppDefaults.padding * 3),
+            FutureBuilder<bool>(
+              future: _isUserAuthenticated(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || !snapshot.data!) {
+                  return Container(); // Не показываем кнопку выхода, если пользователь не авторизован
+                }
+
+                return AppSettingsListTile(
+                  label: S.of(context).logout,
+                  trailing: SvgPicture.asset(AppIcons.right),
+                  onTap: () => _logout(context),
+                );
+              },
             ),
           ],
         ),

@@ -64,6 +64,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "home": MessageLookupByLibrary.simpleMessage("Башкы бет"),
         "langauge": MessageLookupByLibrary.simpleMessage("Тили"),
         "liked": MessageLookupByLibrary.simpleMessage("Жаккан товарлар"),
+        "login": MessageLookupByLibrary.simpleMessage("Кируу"),
         "logout": MessageLookupByLibrary.simpleMessage("Чыгуу"),
         "logout_success": MessageLookupByLibrary.simpleMessage(
             "Сиз аккаунттан ийгиликтүү чыктыныз"),
@@ -100,6 +101,22 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Учурдагы телефон номер"),
         "popular_product_menu":
             MessageLookupByLibrary.simpleMessage("Товарлар"),
+        "privacy_intro": MessageLookupByLibrary.simpleMessage(
+            "Биз сиздин купуялыгыңызды коргоого жана маалыматтарыңыздын коопсуздугун камсыз кылууга умтулабыз."),
+        "privacy_section1_content": MessageLookupByLibrary.simpleMessage(
+            "Биз маалыматтарды кызматтарды көрсөтүү жана тиркеменин иштешин жакшыртуу үчүн гана чогултабыз."),
+        "privacy_section1_title":
+            MessageLookupByLibrary.simpleMessage("1. Маалыматтарды чогултуу"),
+        "privacy_section2_content": MessageLookupByLibrary.simpleMessage(
+            "Биз маалыматтарды коопсуз сактоо жана берүү үчүн заманбап технологияларды колдонобуз."),
+        "privacy_section2_title":
+            MessageLookupByLibrary.simpleMessage("2. Маалыматтарды сактоо"),
+        "privacy_section3_content": MessageLookupByLibrary.simpleMessage(
+            "Сиз аккаунтту жок кылуу өтүнүчүн бере аласыз, жана биз бардык тиешелүү маалыматтарды өчүрөбүз."),
+        "privacy_section3_title":
+            MessageLookupByLibrary.simpleMessage("3. Аккаунтту жок кылуу"),
+        "privacy_title":
+            MessageLookupByLibrary.simpleMessage("Купуялуулук саясаты"),
         "produc_count": MessageLookupByLibrary.simpleMessage("кг"),
         "products": MessageLookupByLibrary.simpleMessage("Товарлар"),
         "profile": MessageLookupByLibrary.simpleMessage("Профиль"),
@@ -111,7 +128,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Кайтаруунун себеби"),
         "refuse_success": MessageLookupByLibrary.simpleMessage(
             "Буйрутма ийгилктүү кайтарылды"),
+        "register": MessageLookupByLibrary.simpleMessage("Катталуу"),
         "search": MessageLookupByLibrary.simpleMessage("Издөө"),
+        "sign_or_signup":
+            MessageLookupByLibrary.simpleMessage("Кирүү же катталуу"),
         "status_get": MessageLookupByLibrary.simpleMessage("Жеткирилди"),
         "status_have": MessageLookupByLibrary.simpleMessage("Кабыл алынды"),
         "status_not_defind": MessageLookupByLibrary.simpleMessage("Белгисиз"),
@@ -121,7 +141,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "Буйрутма кабыл алынган же жолдо болгону учун кайтарууга болбойт"),
         "success_delete_account": MessageLookupByLibrary.simpleMessage(
             "Аккаунт ийгиликтүү өчүрүрүлдү"),
+        "to_main": MessageLookupByLibrary.simpleMessage("Башкы бет"),
         "use_rule": MessageLookupByLibrary.simpleMessage("Колдонуу эрежеси"),
+        "welcome_auth": MessageLookupByLibrary.simpleMessage(
+            "Буйрутма берүү жана көрүү үчүн аккаунтка кириңиз"),
         "world": MessageLookupByLibrary.simpleMessage("Дуйно")
       };
 }

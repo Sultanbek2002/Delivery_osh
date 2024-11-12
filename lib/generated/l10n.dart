@@ -749,6 +749,136 @@ class S {
       args: [],
     );
   }
+
+  /// `Кирүү же катталуу`
+  String get sign_or_signup {
+    return Intl.message(
+      'Кирүү же катталуу',
+      name: 'sign_or_signup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Купуялуулук саясаты`
+  String get privacy_title {
+    return Intl.message(
+      'Купуялуулук саясаты',
+      name: 'privacy_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Биз сиздин купуялыгыңызды коргоого жана маалыматтарыңыздын коопсуздугун камсыз кылууга умтулабыз.`
+  String get privacy_intro {
+    return Intl.message(
+      'Биз сиздин купуялыгыңызды коргоого жана маалыматтарыңыздын коопсуздугун камсыз кылууга умтулабыз.',
+      name: 'privacy_intro',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `1. Маалыматтарды чогултуу`
+  String get privacy_section1_title {
+    return Intl.message(
+      '1. Маалыматтарды чогултуу',
+      name: 'privacy_section1_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Биз маалыматтарды кызматтарды көрсөтүү жана тиркеменин иштешин жакшыртуу үчүн гана чогултабыз.`
+  String get privacy_section1_content {
+    return Intl.message(
+      'Биз маалыматтарды кызматтарды көрсөтүү жана тиркеменин иштешин жакшыртуу үчүн гана чогултабыз.',
+      name: 'privacy_section1_content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `2. Маалыматтарды сактоо`
+  String get privacy_section2_title {
+    return Intl.message(
+      '2. Маалыматтарды сактоо',
+      name: 'privacy_section2_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Биз маалыматтарды коопсуз сактоо жана берүү үчүн заманбап технологияларды колдонобуз.`
+  String get privacy_section2_content {
+    return Intl.message(
+      'Биз маалыматтарды коопсуз сактоо жана берүү үчүн заманбап технологияларды колдонобуз.',
+      name: 'privacy_section2_content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `3. Аккаунтту жок кылуу`
+  String get privacy_section3_title {
+    return Intl.message(
+      '3. Аккаунтту жок кылуу',
+      name: 'privacy_section3_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Сиз аккаунтту жок кылуу өтүнүчүн бере аласыз, жана биз бардык тиешелүү маалыматтарды өчүрөбүз.`
+  String get privacy_section3_content {
+    return Intl.message(
+      'Сиз аккаунтту жок кылуу өтүнүчүн бере аласыз, жана биз бардык тиешелүү маалыматтарды өчүрөбүз.',
+      name: 'privacy_section3_content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Буйрутма берүү жана көрүү үчүн аккаунтка кириңиз`
+  String get welcome_auth {
+    return Intl.message(
+      'Буйрутма берүү жана көрүү үчүн аккаунтка кириңиз',
+      name: 'welcome_auth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Катталуу`
+  String get register {
+    return Intl.message(
+      'Катталуу',
+      name: 'register',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Кируу`
+  String get login {
+    return Intl.message(
+      'Кируу',
+      name: 'login',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Башкы бет`
+  String get to_main {
+    return Intl.message(
+      'Башкы бет',
+      name: 'to_main',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -60,23 +60,13 @@ class _CategoriesGridState extends State<CategoriesGrid> {
   }
 
   Future<void> fetchCategories() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? accessToken = prefs.getString('auth_token');
-
-    if (accessToken == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: Missing access token')),
-      );
-      return;
-    }
-
+   
     final url = '${ApiConsts.urlbase}/api/all-CategoryProduct';
     try {
       final response = await http.get(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $accessToken',
         },
       );
 
